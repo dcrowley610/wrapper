@@ -1,0 +1,937 @@
+/* === Page === */
+.page {
+  min-height: 100%;
+  padding: 16px;
+  border-radius: 28px;
+  color: #123047;
+  background:
+    radial-gradient(circle at top left, rgba(234, 179, 8, 0.12), transparent 22%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.14), transparent 30%),
+    linear-gradient(180deg, #fefdf5 0%, #eef3fb 55%, #e8eef7 100%);
+}
+
+/* === Shared card styles === */
+.heroCard,
+.sidebarCard,
+.workspace,
+.detailHeroCard,
+.detailPanel,
+.sidePanel {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(18, 48, 71, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 22px 60px rgba(18, 48, 71, 0.08);
+  backdrop-filter: blur(18px);
+  padding: 16px;
+}
+
+/* === Hero === */
+.hero {
+  display: block;
+}
+
+.detailHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #1678a2;
+  color: #f0faff;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title,
+.detailTitle {
+  margin: 10px 0 6px;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.lead,
+.sectionCopy,
+.sidebarText {
+  color: #557082;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.sidebarLabel,
+.metricLabel,
+.fieldLabel {
+  margin: 0;
+  color: #6a7f90;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sidebarTitle,
+.sectionTitle,
+.sidePanelTitle {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+}
+
+.workspace,
+.detailWorkspace {
+  margin-top: 12px;
+}
+
+/* === Metrics Row === */
+.metricsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.miniMetric {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f5f9fc;
+  border: 1px solid #dbe4ec;
+  text-align: center;
+}
+
+.miniMetricValue {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #123047;
+}
+
+.miniMetricLabel {
+  margin: 2px 0 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* === Toolbar === */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+/* === Pills === */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #eef5fa;
+  color: #3a5a6e;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.headerPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.emptyState {
+  padding: 24px;
+  border-radius: 16px;
+  background: #f5f9fc;
+  color: #587082;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.backButton {
+  border: 1px solid #cbdbe6;
+  background: rgba(255, 255, 255, 0.9);
+  color: #36566e;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* === Detail Layout === */
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.detailSubtitle {
+  margin: 4px 0 0;
+  color: #60788a;
+  font-size: 0.82rem;
+}
+
+.recordStatus {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #e2eef7;
+  color: #21506d;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.contextLine {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: #6a7f90;
+}
+
+.detailGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.sideStack {
+  flex: 0.9;
+  display: grid;
+  gap: 12px;
+}
+
+/* === Definition List === */
+.definitionList {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+}
+
+.definitionList dt {
+  color: #60788a;
+  font-weight: 700;
+}
+
+.definitionList dd {
+  margin: 0;
+}
+
+/* === Notes Block === */
+.notesBlock {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fefff8;
+  border: 1px solid #e4e8d4;
+  color: #4a5540;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.ownerCallout {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #e2eef7;
+  border: 1px solid #b8d0e2;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #1a4060;
+}
+
+/* === Activity Timeline === */
+.activityTimeline {
+  margin-top: 12px;
+  padding-left: 18px;
+  border-left: 2px solid #c8d9e4;
+}
+
+.activityEntry {
+  position: relative;
+  padding: 0 0 14px 14px;
+}
+
+.activityEntry::before {
+  content: '';
+  position: absolute;
+  left: -23px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1678a2;
+  border: 2px solid #ffffff;
+}
+
+.activityDate {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6a7f90;
+}
+
+.activityAction {
+  margin: 2px 0 0;
+  color: #345060;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.activityActor {
+  font-size: 10px;
+  color: #8a9baa;
+  margin-top: 1px;
+}
+
+/* === Status Badges === */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.statusNotStarted { background: #f0f5fa; color: #6a7f90; }
+.statusInProgress { background: #dbeafe; color: #1e40af; }
+.statusBlocked { background: #fef2f2; color: #991b1b; }
+.statusInReview { background: #fef3c7; color: #92400e; }
+.statusCompleted { background: #dcfce7; color: #166534; }
+.statusCancelled { background: #f3f4f6; color: #6b7280; }
+
+.stepPending { background: #f0f5fa; color: #6a7f90; }
+.stepInProgress { background: #dbeafe; color: #1e40af; }
+.stepBlocked { background: #fef2f2; color: #991b1b; }
+.stepCompleted { background: #dcfce7; color: #166534; }
+.stepSkipped { background: #f3f4f6; color: #6b7280; }
+
+/* === Progress Bar === */
+.progressBarTrack {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e8eef3;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  border-radius: 3px;
+  background: #1678a2;
+  transition: width 200ms ease;
+}
+
+.progressBarFillException {
+  background: #dc2626;
+}
+
+.progressLabel {
+  font-size: 10px;
+  color: #6a7f90;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* === Step Card (Accordion) === */
+.stepCard {
+  border: 1px solid #dbe4ec;
+  border-radius: 8px;
+  background: #ffffff;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.stepCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8rem;
+}
+
+.stepCardHeader:hover {
+  background: rgba(22, 120, 162, 0.03);
+}
+
+.stepOrder {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e8eef3;
+  color: #345060;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepOrderCompleted {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.stepOrderInProgress {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.stepOrderException {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.stepTitle {
+  flex: 1;
+  font-weight: 700;
+  color: #123047;
+}
+
+.stepMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.stepOwner {
+  font-size: 10px;
+  color: #6a7f90;
+}
+
+.exceptionIcon {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chevron {
+  font-size: 10px;
+  color: #8a9baa;
+  transition: transform 150ms;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.stepCardBody {
+  padding: 10px 10px 12px 40px;
+  border-top: 1px solid #eef3f7;
+  font-size: 0.78rem;
+}
+
+.stepDescription {
+  color: #557082;
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.stepSection {
+  margin-top: 8px;
+}
+
+.stepSectionLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 4px;
+}
+
+/* === Exception Banner === */
+.exceptionBanner {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.exceptionLabel {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+
+/* === Evidence Block === */
+.evidenceItem {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 4px 0;
+}
+
+.evidenceIcon {
+  font-size: 10px;
+  color: #1678a2;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.evidenceText {
+  flex: 1;
+}
+
+.evidenceSource {
+  font-weight: 700;
+  color: #123047;
+  font-size: 0.78rem;
+}
+
+.evidenceDesc {
+  color: #557082;
+  font-size: 0.76rem;
+  margin-top: 1px;
+}
+
+.evidenceType {
+  font-size: 9px;
+  color: #8a9baa;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* === Decision Block === */
+.decisionBlock {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #f8f5ff;
+  border: 1px solid #e4d4f4;
+  margin-top: 4px;
+}
+
+.decisionText {
+  font-weight: 700;
+  color: #3b1f6e;
+  font-size: 0.78rem;
+}
+
+.decisionRationale {
+  color: #6b5b8a;
+  font-size: 0.76rem;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.decisionMeta {
+  font-size: 9px;
+  color: #8a9baa;
+  margin-top: 2px;
+}
+
+/* === Note Block === */
+.noteItem {
+  padding: 4px 0;
+  border-bottom: 1px solid #f0f5fa;
+}
+
+.noteItem:last-child {
+  border-bottom: none;
+}
+
+.noteText {
+  color: #345060;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.noteMeta {
+  font-size: 9px;
+  color: #8a9baa;
+  margin-top: 1px;
+}
+
+/* === Rule Reference Chip === */
+.ruleChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 10px;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-top: 2px;
+}
+
+.ruleChipType {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+/* === Linked Record Chip === */
+.linkedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: #eef5fa;
+  border: 1px solid #d9e6ee;
+  color: #1678a2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.linkedChip:hover {
+  background: #dbeafe;
+}
+
+.linkedChipType {
+  font-size: 9px;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* === Template Card === */
+.templateCard {
+  padding: 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #dbe4ec;
+  margin-bottom: 8px;
+}
+
+.templateCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.templateName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #123047;
+  margin: 0;
+}
+
+.templateDesc {
+  font-size: 0.78rem;
+  color: #557082;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.templateMeta {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.templateTag {
+  display: inline-flex;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f0f5fa;
+  color: #476479;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* === Panel (embeddable ProcessCapturePanel) === */
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.panelTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #123047;
+  margin: 0;
+}
+
+.panelRunList {
+  display: grid;
+  gap: 8px;
+}
+
+.panelRunItem {
+  padding: 10px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #dbe4ec;
+}
+
+.panelRunHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.panelRunName {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #123047;
+  margin: 0;
+}
+
+.panelRunMeta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 0.76rem;
+  color: #6a7f90;
+}
+
+.panelRunProgress {
+  margin-top: 6px;
+}
+
+.panelRunFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.76rem;
+}
+
+.panelRunLink {
+  color: #1678a2;
+  font-weight: 700;
+  font-size: 0.78rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  padding: 0;
+}
+
+.panelRunLink:hover {
+  text-decoration: underline;
+}
+
+/* === Start Run Button === */
+.startRunButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #1678a2;
+  border-radius: 8px;
+  background: #eff8ff;
+  color: #1678a2;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.startRunButton:hover {
+  background: #dbeafe;
+}
+
+/* === Template Picker (inline) === */
+.templatePicker {
+  margin-top: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8fbfd;
+  border: 1px solid #d9e6ee;
+}
+
+.templatePickerLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.templatePickerSelect {
+  width: 100%;
+  border: 1px solid #cfdde7;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #123047;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.templatePickerActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  justify-content: flex-end;
+}
+
+/* === Summary Box (Manager Summary) === */
+.summaryBox {
+  padding: 12px;
+  border-radius: 10px;
+  background: #f5f9fc;
+  border: 1px solid #dbe4ec;
+  margin-top: 10px;
+}
+
+.summaryBoxTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #123047;
+  margin: 0 0 6px;
+}
+
+.summaryMetric {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 0.78rem;
+  border-bottom: 1px solid #eef3f7;
+}
+
+.summaryMetric:last-child {
+  border-bottom: none;
+}
+
+.summaryMetricLabel {
+  color: #6a7f90;
+  font-weight: 600;
+}
+
+.summaryMetricValue {
+  color: #123047;
+  font-weight: 700;
+}
+
+.aiOpportunityItem {
+  padding: 4px 0;
+  font-size: 0.76rem;
+  color: #557082;
+  border-bottom: 1px solid #f0f5fa;
+}
+
+.aiOpportunityItem:last-child {
+  border-bottom: none;
+}
+
+.aiLabel {
+  display: inline-flex;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #ede9fe;
+  color: #5b21b6;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+/* === Stepper (Run Status Widget) === */
+.stepperTrack {
+  display: flex;
+  gap: 0;
+  margin-top: 10px;
+}
+
+.stepperStep {
+  flex: 1;
+  padding: 6px 4px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #8a9baa;
+  background: #f0f5fa;
+  border: 1px solid #d9e6ee;
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+
+.stepperStep:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.stepperStep:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.stepperStep:hover {
+  background: #e2eef7;
+  color: #345060;
+}
+
+.stepperStepComplete {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.stepperStepActive {
+  background: #1678a2;
+  color: #ffffff;
+  border-color: #1678a2;
+}
+
+/* === Exception Count === */
+.exceptionCount {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+/* === Responsive === */
+@media (max-width: 980px) {
+  .detailHero,
+  .detailGrid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .toolbar,
+  .listHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

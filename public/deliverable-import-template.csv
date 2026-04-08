@@ -1,0 +1,4 @@
+dealName,entityName,status,dueDate,notes,fileLink
+"# REQUIRED: Deal or project name","# REQUIRED: Entity name","# Optional: not-started | pending | received | reviewed","# Optional: YYYY-MM-DD","# Optional: Free text","# Optional: URL or file path"
+"Fund III Capital Call","Apex Holdings LLC","not-started","2026-04-15","Awaiting signed documents from counsel",""
+"Fund IV Year-End Audit","Meridian Partners LP","pending","2026-05-01","Draft received, pending review","https://docs.example.com/fund-iv-audit"

@@ -1,0 +1,397 @@
+.page {
+  min-height: 100%;
+  padding: 16px;
+  border-radius: 28px;
+  color: #123047;
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.16), transparent 24%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 30%),
+    linear-gradient(180deg, #f8fffb 0%, #edf5fb 55%, #e8f0f7 100%);
+}
+
+.hero {
+  display: block;
+}
+
+.heroCard,
+.workspace {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(18, 48, 71, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 22px 60px rgba(18, 48, 71, 0.08);
+  backdrop-filter: blur(18px);
+  padding: 16px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #123047;
+  color: #f8fbff;
+  padding: 5px 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 10px 0 6px;
+  font-size: clamp(1.2rem, 2.6vw, 1.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.lead {
+  color: #557082;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.workspace {
+  margin-top: 12px;
+}
+
+.sectionTitle {
+  margin: 10px 0 0;
+}
+
+.sectionCopy {
+  color: #557082;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Fund table */
+.fundTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.fundTable th {
+  text-align: left;
+  font-size: 8px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 8px;
+  border-bottom: 2px solid #bcc8d1;
+}
+
+.fundTable td {
+  padding: 3px 8px;
+  font-size: 12px;
+  color: #123047;
+  border-bottom: 1px solid #d9e6ee;
+}
+
+.fundTableRow {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fundTableRow:hover {
+  background: #f0f7fc;
+}
+
+.fundTableRow td:first-child {
+  color: #6a7f90;
+}
+
+.fundTableRow td:nth-child(2) {
+  font-weight: 600;
+}
+
+.countCell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fundTable th:nth-child(3),
+.fundTable th:nth-child(4) {
+  text-align: right;
+}
+
+.sortableHeader {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortableHeader:hover {
+  color: #123047;
+}
+
+.activeFundRow {
+  background: #e0f0ff;
+  border-left: 3px solid #2563eb;
+}
+
+.activeFundRow:hover {
+  background: #d4eaff;
+}
+
+.activeFundRow td:first-child {
+  padding-left: 11px;
+}
+
+/* Add actions & forms */
+.addActions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.addButton {
+  border: 1px solid #16a34a;
+  background: #ffffff;
+  color: #16a34a;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.addButton:hover {
+  background: #f0fdf4;
+}
+
+.addForm {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #f8fbfd;
+  border: 1px solid #d9e7ef;
+}
+
+.addFormTitle {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.addFormField {
+  margin-bottom: 12px;
+}
+
+.addFormLabel {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.addFormInput,
+.addFormSelect {
+  width: 100%;
+  border: 1px solid #cfdde7;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #123047;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.addFormInput:focus,
+.addFormSelect:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.15);
+}
+
+.addFormActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.saveButton {
+  border: 1px solid #16a34a;
+  background: #16a34a;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.saveButton:hover {
+  background: #15803d;
+  border-color: #15803d;
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  border: 1px solid #cbdbe6;
+  background: rgba(255, 255, 255, 0.9);
+  color: #64748b;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+}
+
+/* Edit row button */
+.editRowButton {
+  border: 1px solid #cbdbe6;
+  background: rgba(255, 255, 255, 0.9);
+  color: #475569;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editRowButton:hover {
+  background: #f1f5f9;
+  border-color: #475569;
+}
+
+.actionsCell {
+  text-align: right;
+}
+
+.fundTable th:nth-child(5) {
+  text-align: right;
+}
+
+/* Fund family management section */
+.familySection {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #d9e7ef;
+}
+
+.familyList {
+  margin-top: 12px;
+}
+
+.familyListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e8eff5;
+}
+
+.familyListItem:last-child {
+  border-bottom: none;
+}
+
+.familyInfo h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #123047;
+}
+
+.familyInfo p {
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  color: #6a7f90;
+}
+
+.scopeConfirmation {
+  margin: 14px 0 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #e0f0ff;
+  border: 1px solid #93c5fd;
+  color: #1e40af;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.countLink {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  padding: 0;
+}
+.countLink:hover {
+  color: #1d4ed8;
+}
+
+.actionCell {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d9e6ee;
+  border-radius: 4px;
+  background: #f8fbfd;
+  color: #6a7f90;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: background 120ms, color 120ms;
+}
+
+.actionBtn:hover {
+  background: #e2eef7;
+  color: #123047;
+}
+
+.actionBtn svg {
+  width: 9px;
+  height: 9px;
+}
+
+.commentBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: #1678a2;
+  color: #ffffff;
+  font-size: 8px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 18px;
+    border-radius: 20px;
+  }
+}

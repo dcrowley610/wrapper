@@ -1,0 +1,4 @@
+title,summary,owner,due,priority,playbook
+"# REQUIRED: Free text","# Optional: Free text description","# Optional: Tax Manager | Tax Operations | International Tax | Fund Controller | Legal | AI Agent","# Optional: YYYY-MM-DD","# Optional: High | Medium | Low","# Optional: Extension decision memo | Entity compliance package | K-1 issue triage | Notice response | Withholding analysis | GPR and Year-End Reporting | Custom workflow"
+"Year-end K-1 review for Fund III","Review and validate all K-1 allocations for Fund III investors before filing deadline.","Tax Manager","2026-04-15","High","K-1 issue triage"
+"State composite filing — NY and CA","Prepare and file composite returns for non-resident partners in New York and California.","Tax Operations","2026-05-01","Medium","Notice response"

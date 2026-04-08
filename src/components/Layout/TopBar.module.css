@@ -1,0 +1,47 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem;
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid #d6e2eb;
+  background: linear-gradient(180deg, #fffef8 0%, #f8fbfd 100%);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6a7f90;
+}
+
+.breadcrumbLink {
+  color: #3b6b8a;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 13px;
+  padding: 0;
+}
+
+.breadcrumbLink:hover {
+  color: #123047;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  color: #b8c8d4;
+  user-select: none;
+}
+
+.breadcrumbCurrent {
+  color: #123047;
+  font-weight: 700;
+}
+

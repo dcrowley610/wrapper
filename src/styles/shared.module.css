@@ -1,0 +1,460 @@
+/* ===========================
+   Shared Design Tokens & Patterns
+   Used by all module CSS files via composes
+   =========================== */
+
+/* === Cards === */
+.card {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(18, 48, 71, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 22px 60px rgba(18, 48, 71, 0.08);
+  backdrop-filter: blur(18px);
+  padding: 16px;
+}
+
+/* === Hero Layout === */
+.heroGrid {
+  display: block;
+}
+
+/* === Typography === */
+.pageTitle {
+  margin: 10px 0 6px;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+.leadText {
+  color: #557082;
+  line-height: 1.65;
+}
+
+.label {
+  margin: 0;
+  color: #6a7f90;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  margin: 10px 0 0;
+}
+
+/* === Pill === */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #eef5fa;
+  color: #3a5a6e;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* === Form Controls === */
+.input,
+.select {
+  width: 100%;
+  border: 1px solid #cfdde7;
+  border-radius: 16px;
+  background: #f8fbfd;
+  color: #123047;
+  padding: 12px 14px;
+  font: inherit;
+}
+
+/* === Toolbar === */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.searchWrap {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+}
+
+.filterRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filterField {
+  display: grid;
+  gap: 8px;
+  min-width: 160px;
+}
+
+/* === Record Grid === */
+.recordGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.recordCard {
+  border: 1px solid #d9e6ee;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+  padding: 18px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.recordHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.recordTitle {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.recordSubtitle {
+  margin: 6px 0 0;
+  color: #60788a;
+}
+
+.recordMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.recordMeta span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef5fa;
+  color: #476479;
+  font-size: 0.95rem;
+}
+
+/* === Definition List === */
+.definitionList {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 14px;
+  margin: 14px 0 0;
+}
+
+.definitionList dt {
+  color: #60788a;
+  font-weight: 700;
+}
+
+.definitionList dd {
+  margin: 0;
+}
+
+/* === Activity Timeline === */
+.activityTimeline {
+  margin-top: 18px;
+  padding-left: 20px;
+  border-left: 2px solid #c8d9e4;
+}
+
+.activityEntry {
+  position: relative;
+  padding: 0 0 20px 16px;
+}
+
+.activityEntry::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4a90b8;
+  border: 2px solid #ffffff;
+}
+
+.activityDate {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a7f90;
+}
+
+.activityAction {
+  margin: 4px 0 0;
+  color: #345060;
+  line-height: 1.5;
+}
+
+.activityActor {
+  font-size: 12px;
+  color: #8a9baa;
+  margin-top: 2px;
+}
+
+/* === Metrics Row === */
+.metricsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.miniMetric {
+  flex: 1;
+  min-width: 100px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #f5f9fc;
+  border: 1px solid #dbe4ec;
+  text-align: center;
+}
+
+.miniMetricValue {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #123047;
+}
+
+.miniMetricLabel {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* === Empty State === */
+.emptyState {
+  padding: 28px;
+  border-radius: 16px;
+  background: #f5f9fc;
+  color: #587082;
+}
+
+/* === Back Button === */
+.backButton {
+  border: 1px solid #cbdbe6;
+  background: rgba(255, 255, 255, 0.9);
+  color: #36566e;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* === List Header === */
+.listHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* === Header Pills === */
+.headerPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* === Context Line === */
+.contextLine {
+  margin: 12px 0 0;
+  font-size: 0.88rem;
+  color: #6a7f90;
+}
+
+/* === Detail Grid === */
+.detailGrid {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.detailPanel {
+  flex: 1.5;
+}
+
+.sideStack {
+  flex: 0.9;
+  display: grid;
+  gap: 16px;
+}
+
+/* === Notes / Callouts === */
+.notesBlock {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #fefff8;
+  border: 1px solid #e4e8d4;
+  color: #4a5540;
+  line-height: 1.6;
+}
+
+/* === Capability Placeholder === */
+.capabilityPlaceholder {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1.5px dashed #b8ccd9;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      #f0f5fa,
+      #f0f5fa 8px,
+      #f5f9fc 8px,
+      #f5f9fc 16px
+    );
+}
+
+.capabilityTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.capabilityTable th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6a7f90;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 8px 10px;
+  border-bottom: 1px solid #cfdde7;
+}
+
+.capabilityTable td {
+  padding: 10px;
+  font-size: 0.92rem;
+  color: #8a9baa;
+  border-bottom: 1px solid #e8eff5;
+}
+
+.capabilityFooter {
+  margin: 12px 0 0;
+  font-style: italic;
+  color: #8a9baa;
+  font-size: 0.88rem;
+}
+
+/* === Rule Card === */
+.ruleCard {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #d0dde6;
+  margin-bottom: 10px;
+  color: #8a9baa;
+}
+
+.ruleCard h4 {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: #5a7080;
+}
+
+/* === Review Banner / Checklist === */
+.reviewBanner {
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #e8f4ec;
+  border: 1px solid #b8d9c4;
+  color: #1d5c34;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.reviewRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e8eff5;
+  color: #8a9baa;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.checklist li {
+  padding: 8px 0;
+  color: #8a9baa;
+  border-bottom: 1px solid #eef3f7;
+}
+
+.checklist li::before {
+  content: '\2610  ';
+  color: #b0bfc9;
+}
+
+/* === Linked Records === */
+.linkedList {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.linkedCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+  border: 1px solid #d9e6ee;
+}
+
+.linkedName {
+  margin: 0;
+  font-weight: 700;
+  color: #123047;
+}
+
+.linkedMeta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #6a7f90;
+}
+
+/* === Responsive === */
+@media (max-width: 980px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .toolbar,
+  .listHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 720px) {
+  .backButton {
+    padding: 8px 12px;
+    font-size: 0.88rem;
+  }
+}

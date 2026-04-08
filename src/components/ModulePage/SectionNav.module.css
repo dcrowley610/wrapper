@@ -1,0 +1,24 @@
+.sectionNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.sectionTab {
+  border: 1px solid #cbdbe6;
+  background: rgba(255, 255, 255, 0.9);
+  color: #36566e;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sectionTabActive {
+  background: var(--section-nav-active-bg, #123047);
+  color: #ffffff;
+  border-color: var(--section-nav-active-bg, #123047);
+}
