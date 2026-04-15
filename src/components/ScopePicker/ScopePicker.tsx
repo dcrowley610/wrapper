@@ -3,6 +3,8 @@ import { usePlatformContext } from '../../platform/context';
 import type { ScopeSelection } from '../../platform/context';
 import { fundsService } from '../../modules/home/services/funds.service';
 import { useFundsVersion } from '../../modules/home/hooks/useFundsVersion';
+import { dealsService } from '../../modules/deals/services/deals.service';
+import { useDealsVersion } from '../../modules/deals/hooks/useDealsVersion';
 import { DimensionDropdown } from './DimensionDropdown';
 import { PresetMenu } from './PresetMenu';
 import styles from './ScopePicker.module.css';
@@ -10,7 +12,9 @@ import styles from './ScopePicker.module.css';
 export function ScopePicker() {
   const { scopeDimensions, scopePresets, scopeSelection, setScopeSelection } = usePlatformContext();
   useFundsVersion();
+  useDealsVersion();
   const fundOptions = fundsService.getFundScopeDimensionOptions();
+  const dealOptions = dealsService.getDealScopeDimensionOptions();
 
   const updateDimension = useCallback(
     (key: keyof ScopeSelection, ids: string[]) => {
@@ -41,6 +45,14 @@ export function ScopePicker() {
         selectedIds={scopeSelection.investorIds}
         allLabel="All Investors"
         onChange={(ids) => updateDimension('investorIds', ids)}
+        placeholder
+      />
+      <DimensionDropdown
+        label="Deal"
+        options={dealOptions}
+        selectedIds={scopeSelection.dealIds}
+        allLabel="All Deals"
+        onChange={(ids) => updateDimension('dealIds', ids)}
         placeholder
       />
       <PresetMenu

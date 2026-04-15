@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePlatformContext } from '../../../../platform/context';
 import type { EntityRecord } from '../../types';
 import { entitiesService, ownershipService } from '../../services';
 import { dealsService } from '../../../deals/services';
@@ -7,9 +8,10 @@ import styles from '../../EntitiesModule.module.css';
 
 export function StructureSection({ entity }: { entity: EntityRecord }) {
   const navigate = useNavigate();
+  const { scopeSelection } = usePlatformContext();
   const [selectedDealId, setSelectedDealId] = useState<string>('all');
 
-  const allDeals = useMemo(() => dealsService.getAccessibleDeals(), []);
+  const allDeals = useMemo(() => dealsService.getScopedDeals(scopeSelection), [scopeSelection]);
   const dealId = selectedDealId === 'all' ? undefined : selectedDealId;
 
   const directOwners = ownershipService.getDirectOwners(entity.id, dealId);

@@ -1,4 +1,5 @@
 import { fundsService } from '../../modules/home/services/funds.service';
+import { dealsService } from '../../modules/deals/services/deals.service';
 
 // --- Legacy types (kept temporarily for backward compat) ---
 export type ScopeKind = 'fund' | 'legalEntity' | 'taxYear' | 'workstream';
@@ -51,7 +52,7 @@ export const MOCK_SCOPE_OPTIONS: ScopeOption[] = [
 
 // --- New multi-dimensional scope types ---
 
-export type ScopeDimension = 'fund' | 'taxYear' | 'workstream' | 'investor';
+export type ScopeDimension = 'fund' | 'taxYear' | 'workstream' | 'investor' | 'deal';
 
 export type ScopeDimensionOption = {
   id: string;
@@ -65,6 +66,7 @@ export type ScopeSelection = {
   taxYearIds: string[];
   workstreamIds: string[];
   investorIds: string[];
+  dealIds: string[];
 };
 
 export type ScopePreset = {
@@ -95,14 +97,15 @@ export const SCOPE_DIMENSIONS: Record<ScopeDimension, ScopeDimensionOption[]> = 
     { id: 'blue-harbor-feeder', label: 'Blue Harbor Feeder', dimension: 'investor', description: 'Cayman Islands feeder SPC.' },
     { id: 'alex-rivera', label: 'Alex Rivera', dimension: 'investor', description: 'Canadian individual investor.' },
   ],
+  deal: [],
 };
 
 export const SCOPE_PRESETS: ScopePreset[] = [
-  { id: 'brep-ix-2026', label: 'BREP IX / 2026', description: 'BREP IX fund scoped to tax year 2026.', selection: { fundIds: ['brep-ix'], taxYearIds: ['tax-year-2026'], workstreamIds: [], investorIds: [] } },
-  { id: 'brep-ix-all-years', label: 'BREP IX — All Years', description: 'All tax years for BREP IX.', selection: { fundIds: ['brep-ix'], taxYearIds: [], workstreamIds: [], investorIds: [] } },
-  { id: 'compliance-2026', label: 'State Compliance — 2026', description: 'Federal + State Compliance workstream for 2026.', selection: { fundIds: [], taxYearIds: ['tax-year-2026'], workstreamIds: ['fed-state-compliance'], investorIds: [] } },
-  { id: 'all-blockers', label: 'All Blockers — All Years', description: 'Atlas Blocker Lux across all tax years.', selection: { fundIds: ['atlas-blocker-lux'], taxYearIds: [], workstreamIds: [], investorIds: [] } },
-  { id: 'everything', label: 'All Funds / All Years', description: 'No scope filter — show everything.', selection: { fundIds: [], taxYearIds: [], workstreamIds: [], investorIds: [] } },
+  { id: 'brep-ix-2026', label: 'BREP IX / 2026', description: 'BREP IX fund scoped to tax year 2026.', selection: { fundIds: ['brep-ix'], taxYearIds: ['tax-year-2026'], workstreamIds: [], investorIds: [], dealIds: [] } },
+  { id: 'brep-ix-all-years', label: 'BREP IX — All Years', description: 'All tax years for BREP IX.', selection: { fundIds: ['brep-ix'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
+  { id: 'compliance-2026', label: 'State Compliance — 2026', description: 'Federal + State Compliance workstream for 2026.', selection: { fundIds: [], taxYearIds: ['tax-year-2026'], workstreamIds: ['fed-state-compliance'], investorIds: [], dealIds: [] } },
+  { id: 'all-blockers', label: 'All Blockers — All Years', description: 'Atlas Blocker Lux across all tax years.', selection: { fundIds: ['atlas-blocker-lux'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
+  { id: 'everything', label: 'All Funds / All Years', description: 'No scope filter — show everything.', selection: { fundIds: [], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
 ];
 
 export const DEFAULT_SCOPE_SELECTION: ScopeSelection = {
@@ -110,10 +113,11 @@ export const DEFAULT_SCOPE_SELECTION: ScopeSelection = {
   taxYearIds: ['tax-year-2026'],
   workstreamIds: [],
   investorIds: [],
+  dealIds: [],
 };
 
 export function matchesScope(recordScopeIds: string[], selection: ScopeSelection): boolean {
-  const checks = [selection.fundIds, selection.taxYearIds, selection.workstreamIds, selection.investorIds];
+  const checks = [selection.fundIds, selection.taxYearIds, selection.workstreamIds, selection.investorIds, selection.dealIds];
   return checks.every(
     (ids) => ids.length === 0 || ids.some((id) => recordScopeIds.includes(id))
   );
@@ -155,6 +159,15 @@ export function computeScopeLabel(selection: ScopeSelection): string {
       parts.push(opt?.label ?? selection.investorIds[0]);
     } else {
       parts.push(`${selection.investorIds.length} Investors`);
+    }
+  }
+
+  if (selection.dealIds.length > 0) {
+    if (selection.dealIds.length === 1) {
+      const opt = dealsService.getDealScopeDimensionOptions().find((d) => d.id === selection.dealIds[0]);
+      parts.push(opt?.label ?? selection.dealIds[0]);
+    } else {
+      parts.push(`${selection.dealIds.length} Deals`);
     }
   }
 

@@ -5,12 +5,13 @@ import styles from '../DealsModule.module.css';
 type DealIntakeFormProps = {
   onSubmit: (deal: DealRecord) => void;
   onCancel: () => void;
+  scopeIds: string[];
 };
 
 const INVESTMENT_TYPE_OPTIONS = ['Equity', 'Debt', 'Real Estate', 'Fund of Funds', 'Infrastructure'] as const;
 const STATUS_OPTIONS = ['Active', 'Pending Review', 'Closed'] as const;
 
-export function DealIntakeForm({ onSubmit, onCancel }: DealIntakeFormProps) {
+export function DealIntakeForm({ onSubmit, onCancel, scopeIds }: DealIntakeFormProps) {
   const [name, setName] = useState('');
   const [owner, setOwner] = useState('');
   const [investmentType, setInvestmentType] = useState<string>(INVESTMENT_TYPE_OPTIONS[0]);
@@ -29,7 +30,7 @@ export function DealIntakeForm({ onSubmit, onCancel }: DealIntakeFormProps) {
       taxYear: taxYear.trim(),
       status: status as DealRecord['status'],
       linkedEntityIds: [],
-      scopeIds: [],
+      scopeIds,
       requestCount: 0,
       documentCount: 0,
       openQuestions: 0,

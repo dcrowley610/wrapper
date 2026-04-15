@@ -1,5 +1,6 @@
 import type { EntityRecord } from '../../types';
 import { SummarySection } from './SummarySection';
+import { AssociationsSection } from './AssociationsSection';
 import { ReviewSection } from './ReviewSection';
 import { identityService } from '../../../identity/services';
 import styles from '../../EntitiesModule.module.css';
@@ -34,6 +35,8 @@ export function OverviewSection({ entity, onEdit }: OverviewSectionProps) {
           </ul>
         </div>
       )}
+      <div className={styles.sectionDivider} />
+      <AssociationsSection entity={entity} />
       <div className={styles.sectionDivider} />
       <ReviewSection entity={entity} />
     </>

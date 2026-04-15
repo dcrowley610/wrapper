@@ -1,14 +1,22 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformContext } from '../../../platform/context';
 import { fundsService } from '../services/funds.service';
+import { entitiesService } from '../../entities/services/entities.service';
+import { dealsService } from '../../deals/services/deals.service';
 import { useFundsVersion } from '../hooks/useFundsVersion';
+import { useEntitiesVersion } from '../../entities/hooks/useEntitiesVersion';
+import { useDealsVersion } from '../../deals/hooks/useDealsVersion';
 import { RecordCommentModal } from '../../../components/RecordCommentModal/RecordCommentModal';
 import styles from '../HomeModule.module.css';
+
+import type { EntityRecord } from '../../entities/types/entity.types';
 
 type SortKey = 'fundFamily' | 'fund' | 'entities' | 'deals';
 type SortDir = 'asc' | 'desc';
 type FormMode = 'none' | 'addFamily' | 'addFund' | 'editFamily' | 'editFund';
+
+const CATEGORY_ORDER: EntityRecord['category'][] = ['Fund Vehicle', 'Holding Company', 'Blocker', 'Operating Company', 'Third-Party'];
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -20,6 +28,10 @@ export default function HomePage() {
   const [sortKey, setSortKey] = useState<SortKey>('fundFamily');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
   const fundsVersion = useFundsVersion();
+  const entitiesVersion = useEntitiesVersion();
+  const dealsVersion = useDealsVersion();
+
+  const [expandedFundId, setExpandedFundId] = useState<string | null>(null);
 
   // Form state
   const [formMode, setFormMode] = useState<FormMode>('none');
@@ -27,24 +39,41 @@ export default function HomePage() {
   const [commentTargetId, setCommentTargetId] = useState<string | null>(null);
   const [commentTargetType, setCommentTargetType] = useState<'fund' | 'family'>('fund');
   const [familyName, setFamilyName] = useState('');
+  const [familyShortName, setFamilyShortName] = useState('');
   const [familyDesc, setFamilyDesc] = useState('');
   const [fundName, setFundName] = useState('');
+  const [fundShortName, setFundShortName] = useState('');
   const [fundFamilyId, setFundFamilyId] = useState('');
 
   const families = fundsService.getFundFamilies();
   const funds = fundsService.getFunds();
 
   const rows = useMemo(() => {
+    const allEntities = entitiesService.getAccessibleEntities();
+    const allDeals = dealsService.getAccessibleDeals();
+
     const mapped = funds.map((fund) => {
       const family = families.find((ff) => ff.id === fund.fundFamilyId);
+      const fundDealIds = allDeals.filter(d => d.scopeIds.includes(fund.scopeId)).map(d => d.id);
+      const fundEntities = allEntities.filter(e =>
+        e.associatedFundIds.includes(fund.id) ||
+        e.associatedDealIds.some(did => fundDealIds.includes(did))
+      );
+      fundEntities.sort((a, b) => {
+        const ai = CATEGORY_ORDER.indexOf(a.category);
+        const bi = CATEGORY_ORDER.indexOf(b.category);
+        return ai - bi;
+      });
       return {
         id: fund.id,
         fundFamily: family?.name ?? '',
         fundFamilyId: fund.fundFamilyId,
         fund: fund.name,
+        fundShortName: fund.shortNameFund,
         scopeId: fund.scopeId,
-        entityCount: fund.entityCount,
-        dealCount: fund.dealCount,
+        entityCount: fundEntities.length,
+        entities: fundEntities,
+        dealCount: allDeals.filter(d => d.scopeIds.includes(fund.scopeId)).length,
       };
     });
 
@@ -68,14 +97,16 @@ export default function HomePage() {
     });
 
     return mapped;
-  }, [funds, families, sortKey, sortDir, fundsVersion]);
+  }, [funds, families, sortKey, sortDir, fundsVersion, entitiesVersion, dealsVersion]);
 
   function closeForm() {
     setFormMode('none');
     setEditTargetId(null);
     setFamilyName('');
+    setFamilyShortName('');
     setFamilyDesc('');
     setFundName('');
+    setFundShortName('');
     setFundFamilyId('');
   }
 
@@ -134,14 +165,27 @@ export default function HomePage() {
   function handleSaveAddFamily() {
     const id = slugify(familyName);
     if (!id || !familyName.trim()) return;
-    fundsService.addFundFamily({ id, name: familyName.trim(), description: familyDesc.trim() });
+    fundsService.addFundFamily({
+      id,
+      name: familyName.trim(),
+      shortName: familyShortName.trim(),
+      description: familyDesc.trim(),
+      comments: [],
+    });
     closeForm();
   }
 
   function handleSaveAddFund() {
     const id = slugify(fundName);
     if (!id || !fundName.trim() || !fundFamilyId) return;
-    fundsService.addFund({ id, name: fundName.trim(), fundFamilyId, scopeId: id, entityCount: 0, dealCount: 0 });
+    fundsService.addFund({
+      id,
+      name: fundName.trim(),
+      shortNameFund: fundShortName.trim(),
+      fundFamilyId,
+      scopeId: id,
+      comments: [],
+    });
     closeForm();
   }
 
@@ -153,6 +197,7 @@ export default function HomePage() {
     setFormMode('editFund');
     setEditTargetId(fundId);
     setFundName(fund.name);
+    setFundShortName(fund.shortNameFund);
     setFundFamilyId(fund.fundFamilyId);
   }
 
@@ -163,22 +208,29 @@ export default function HomePage() {
     setFormMode('editFamily');
     setEditTargetId(familyId);
     setFamilyName(family.name);
+    setFamilyShortName(family.shortName);
     setFamilyDesc(family.description);
   }
 
   function handleSaveEditFund() {
     if (!editTargetId || !fundName.trim() || !fundFamilyId) return;
-    fundsService.updateFund(editTargetId, { name: fundName.trim(), fundFamilyId });
+    fundsService.updateFund(editTargetId, {
+      name: fundName.trim(),
+      shortNameFund: fundShortName.trim(),
+      fundFamilyId,
+    });
     closeForm();
   }
 
   function handleSaveEditFamily() {
     if (!editTargetId || !familyName.trim()) return;
-    fundsService.updateFundFamily(editTargetId, { name: familyName.trim(), description: familyDesc.trim() });
+    fundsService.updateFundFamily(editTargetId, {
+      name: familyName.trim(),
+      shortName: familyShortName.trim(),
+      description: familyDesc.trim(),
+    });
     closeForm();
   }
-
-  const isFormOpen = formMode !== 'none';
 
   return (
     <div className={styles.page}>
@@ -217,6 +269,15 @@ export default function HomePage() {
                 onChange={(e) => setFamilyName(e.target.value)}
                 placeholder="e.g. Brookfield Infrastructure Partners"
                 autoFocus
+              />
+            </div>
+            <div className={styles.addFormField}>
+              <span className={styles.addFormLabel}>Short Name</span>
+              <input
+                className={styles.addFormInput}
+                value={familyShortName}
+                onChange={(e) => setFamilyShortName(e.target.value)}
+                placeholder="e.g. BIP"
               />
             </div>
             <div className={styles.addFormField}>
@@ -272,6 +333,15 @@ export default function HomePage() {
                 autoFocus
               />
             </div>
+            <div className={styles.addFormField}>
+              <span className={styles.addFormLabel}>Fund Short Name</span>
+              <input
+                className={styles.addFormInput}
+                value={fundShortName}
+                onChange={(e) => setFundShortName(e.target.value)}
+                placeholder="e.g. BREP IX"
+              />
+            </div>
             <div className={styles.addFormActions}>
               <button
                 className={styles.saveButton}
@@ -291,6 +361,7 @@ export default function HomePage() {
         <table className={styles.fundTable}>
           <thead>
             <tr>
+              <th style={{ width: 28 }}></th>
               <th className={styles.sortableHeader} onClick={() => handleSort('fundFamily')}>
                 Fund Family{sortIndicator('fundFamily')}
               </th>
@@ -307,53 +378,98 @@ export default function HomePage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
-              <tr
-                key={row.scopeId}
-                className={`${styles.fundTableRow} ${scopeSelection.fundIds.length === 1 && scopeSelection.fundIds[0] === row.scopeId ? styles.activeFundRow : ''}`}
-                onClick={() => handleFundClick(row.scopeId)}
-              >
-                <td>{row.fundFamily}</td>
-                <td>{row.fund}</td>
-                <td className={styles.countCell}>
-                  <button
-                    className={styles.countLink}
-                    onClick={(e) => { e.stopPropagation(); handleFundClick(row.scopeId); navigate('/entities'); }}
-                    type="button"
+            {rows.map((row) => {
+              const isExpanded = expandedFundId === row.id;
+              return (
+                <Fragment key={row.scopeId}>
+                  <tr
+                    className={`${styles.fundTableRow} ${scopeSelection.fundIds.length === 1 && scopeSelection.fundIds[0] === row.scopeId ? styles.activeFundRow : ''}`}
+                    onClick={() => handleFundClick(row.scopeId)}
                   >
-                    {row.entityCount}
-                  </button>
-                </td>
-                <td className={styles.countCell}>
-                  <button
-                    className={styles.countLink}
-                    onClick={(e) => { e.stopPropagation(); handleFundClick(row.scopeId); navigate('/deals'); }}
-                    type="button"
-                  >
-                    {row.dealCount}
-                  </button>
-                </td>
-                <td className={styles.actionsCell}>
-                  <div className={styles.actionCell}>
-                    <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); startEditFund(row.id); }} type="button" title="Edit fund">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" />
-                      </svg>
-                    </button>
-                    <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); handleDeleteFund(row.id); }} type="button" title="Delete fund">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M2 4h12M5.5 4V2.5h5V4M6 7v5M10 7v5M3.5 4l.5 10h8l.5-10" />
-                      </svg>
-                    </button>
-                    <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); handleFundComment(row.id); }} type="button" title="View comments">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M2 2h12v9H5l-3 3V2z" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                    <td style={{ width: 28, padding: '3px 4px' }}>
+                      {row.entityCount > 0 && (
+                        <button
+                          className={styles.chevronBtn}
+                          onClick={(e) => { e.stopPropagation(); setExpandedFundId(isExpanded ? null : row.id); }}
+                          type="button"
+                          title={isExpanded ? 'Collapse entities' : 'Expand entities'}
+                        >
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 150ms' }}>
+                            <path d="M6 4l4 4-4 4" />
+                          </svg>
+                        </button>
+                      )}
+                    </td>
+                    <td>{row.fundFamily}</td>
+                    <td>
+                      <div>{row.fund}</div>
+                      {row.fundShortName && <div style={{ fontSize: 10, color: '#6a7f90', marginTop: 2 }}>{row.fundShortName}</div>}
+                    </td>
+                    <td className={styles.countCell}>
+                      <button
+                        className={styles.countLink}
+                        onClick={(e) => { e.stopPropagation(); handleFundClick(row.scopeId); navigate('/entities'); }}
+                        type="button"
+                      >
+                        {row.entityCount}
+                      </button>
+                    </td>
+                    <td className={styles.countCell}>
+                      <button
+                        className={styles.countLink}
+                        onClick={(e) => { e.stopPropagation(); handleFundClick(row.scopeId); navigate('/deals'); }}
+                        type="button"
+                      >
+                        {row.dealCount}
+                      </button>
+                    </td>
+                    <td className={styles.actionsCell}>
+                      <div className={styles.actionCell}>
+                        <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); startEditFund(row.id); }} type="button" title="Edit fund">
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" />
+                          </svg>
+                        </button>
+                        <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); handleDeleteFund(row.id); }} type="button" title="Delete fund">
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 4h12M5.5 4V2.5h5V4M6 7v5M10 7v5M3.5 4l.5 10h8l.5-10" />
+                          </svg>
+                        </button>
+                        <button className={styles.actionBtn} onClick={(e) => { e.stopPropagation(); handleFundComment(row.id); }} type="button" title="View comments">
+                          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 2h12v9H5l-3 3V2z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {isExpanded && (
+                    <tr className={styles.expandedRow}>
+                      <td colSpan={6} style={{ padding: 0 }}>
+                        <div className={styles.expandedContent}>
+                          {row.entities.map((ent) => (
+                            <div key={ent.id} className={styles.entityItem}>
+                              <button
+                                className={styles.entityLink}
+                                onClick={() => navigate(`/entities/${ent.id}`)}
+                                type="button"
+                              >
+                                {ent.name}
+                              </button>
+                              <span className={`${styles.categoryBadge} ${styles[`category${ent.category.replace(/[\s-]/g, '')}`]}`}>
+                                {ent.category}
+                              </span>
+                              <span className={`${styles.statusDot} ${ent.status === 'Active' ? styles.statusActive : ent.status === 'Pending Review' ? styles.statusPending : styles.statusInactive}`} />
+                              <span className={styles.entityStatus}>{ent.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
 
@@ -371,6 +487,7 @@ export default function HomePage() {
               <div key={ff.id} className={styles.familyListItem}>
                 <div className={styles.familyInfo}>
                   <h4>{ff.name}</h4>
+                  {ff.shortName && <p>{ff.shortName}</p>}
                   <p>{ff.description}</p>
                 </div>
                 <div className={styles.actionCell}>

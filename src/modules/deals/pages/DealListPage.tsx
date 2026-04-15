@@ -4,10 +4,12 @@ import { usePlatformContext } from '../../../platform/context';
 import { DealCard } from '../components/DealCard';
 import { DealTable, ALL_DEAL_COLUMNS, DEFAULT_DEAL_COLUMNS } from '../components/DealTable';
 import { ColumnPicker } from '../../../components/ColumnPicker/ColumnPicker';
+import { MultiSelectDropdown } from '../../../components/MultiSelectDropdown';
 import { DealEditModal } from '../components/DealEditModal';
 import { DealIntakeForm } from '../components/DealIntakeForm';
 import { RecordCommentModal } from '../../../components/RecordCommentModal/RecordCommentModal';
 import { DEAL_FILTERS } from '../config';
+import { SCOPE_DIMENSIONS } from '../../../platform/context/platformContext.types';
 import { useDealsVersion } from '../hooks/useDealsVersion';
 import { dealsService } from '../services';
 import { identityOrchestrator } from '../../identity/services';
@@ -34,6 +36,11 @@ export function DealListPage() {
   const [showIntake, setShowIntake] = useState(false);
   const [showImport, setShowImport] = useState(false);
 
+  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
+  const [selectedFunds, setSelectedFunds] = useState<string[]>([]);
+  const [selectedYears, setSelectedYears] = useState<string[]>([]);
+  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
+
   const STORAGE_KEY = 'deal-visible-columns';
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -47,6 +54,25 @@ export function DealListPage() {
 
   const version = useDealsVersion();
 
+  const allDeals = useMemo(() => dealsService.getAccessibleDeals(), [version]);
+
+  const dealOptions = useMemo(
+    () => allDeals.map((d) => ({ value: d.id, label: d.name })),
+    [allDeals],
+  );
+  const fundOptions = useMemo(
+    () => SCOPE_DIMENSIONS.fund.map((f) => ({ value: f.id, label: f.label })),
+    [],
+  );
+  const yearOptions = useMemo(
+    () => SCOPE_DIMENSIONS.taxYear.map((y) => ({ value: y.id, label: y.label })),
+    [],
+  );
+  const investorOptions = useMemo(
+    () => SCOPE_DIMENSIONS.investor.map((i) => ({ value: i.id, label: i.label })),
+    [],
+  );
+
   const visibleDeals = useMemo(() => {
     const scopedDeals = dealsService.getScopedDeals(scopeSelection);
     return scopedDeals.filter((deal) => {
@@ -59,9 +85,14 @@ export function DealListPage() {
       const matchesStatus = filters.status === 'All statuses' || deal.status === filters.status;
       const matchesType = filters.investmentType === 'All types' || deal.investmentType === filters.investmentType;
 
-      return matchesSearch && matchesStatus && matchesType;
+      const matchesDeal = selectedDeals.length === 0 || selectedDeals.includes(deal.id);
+      const matchesFund = selectedFunds.length === 0 || deal.scopeIds.some((id) => selectedFunds.includes(id));
+      const matchesYear = selectedYears.length === 0 || deal.scopeIds.some((id) => selectedYears.includes(id));
+      const matchesInvestor = selectedInvestors.length === 0 || deal.scopeIds.some((id) => selectedInvestors.includes(id));
+
+      return matchesSearch && matchesStatus && matchesType && matchesDeal && matchesFund && matchesYear && matchesInvestor;
     });
-  }, [scopeSelection, searchValue, filters, version]);
+  }, [scopeSelection, searchValue, filters, selectedDeals, selectedFunds, selectedYears, selectedInvestors, version]);
 
   const sortedDeals = useMemo(() => {
     const sorted = [...visibleDeals];
@@ -155,9 +186,15 @@ export function DealListPage() {
         </div>
       </section>
 
-      {showIntake && (
-        <DealIntakeForm onSubmit={handleIntakeSubmit} onCancel={() => setShowIntake(false)} />
-      )}
+      {showIntake && (() => {
+        const intakeScopeIds = [
+          ...scopeSelection.fundIds,
+          ...scopeSelection.taxYearIds,
+          ...scopeSelection.workstreamIds,
+          ...scopeSelection.investorIds,
+        ];
+        return <DealIntakeForm onSubmit={handleIntakeSubmit} onCancel={() => setShowIntake(false)} scopeIds={intakeScopeIds} />;
+      })()}
 
       {showImport && (
         <Suspense fallback={<div className={styles.emptyState}>Loading import tools...</div>}>
@@ -231,6 +268,10 @@ export function DealListPage() {
                 </select>
               </label>
             ))}
+            <MultiSelectDropdown label="Deal" options={dealOptions} selected={selectedDeals} onChange={setSelectedDeals} />
+            <MultiSelectDropdown label="Fund" options={fundOptions} selected={selectedFunds} onChange={setSelectedFunds} />
+            <MultiSelectDropdown label="Tax Year" options={yearOptions} selected={selectedYears} onChange={setSelectedYears} />
+            <MultiSelectDropdown label="Investor" options={investorOptions} selected={selectedInvestors} onChange={setSelectedInvestors} />
           </div>
         </div>
 

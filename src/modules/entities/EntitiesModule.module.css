@@ -906,15 +906,15 @@
 .metricsRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .miniMetric {
   flex: 1;
-  min-width: 140px;
-  padding: 14px;
-  border-radius: 16px;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
   background: #f5f9fc;
   border: 1px solid #dbe4ec;
   text-align: center;
@@ -922,14 +922,14 @@
 
 .miniMetricValue {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: #123047;
 }
 
 .miniMetricLabel {
   margin: 4px 0 0;
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 700;
   color: #6a7f90;
   text-transform: uppercase;
@@ -937,8 +937,8 @@
 }
 
 .notesBlock {
-  margin-top: 14px;
-  padding: 10px;
+  margin-top: 8px;
+  padding: 6px 8px;
   border-radius: 14px;
   background: #fefff8;
   border: 1px solid #e4e8d4;
@@ -948,8 +948,8 @@
 }
 
 .ownerCallout {
-  margin-top: 14px;
-  padding: 8px 12px;
+  margin-top: 6px;
+  padding: 4px 8px;
   border-radius: 14px;
   background: #e8eef7;
   border: 1px solid #c5d2e2;
@@ -960,9 +960,50 @@
 
 /* Record workspace: section divider */
 .sectionDivider {
-  margin: 28px 0;
+  margin: 14px 0;
   border: none;
   border-top: 1px solid #d9e7ef;
+}
+
+/* Associations block */
+.associationBlock {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f5f9fc;
+  border: 1px solid #dbe4ec;
+}
+
+.associationGroup {
+  margin-top: 8px;
+}
+
+.associationGroup:first-child {
+  margin-top: 0;
+}
+
+.associationItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 12px;
+  color: #557082;
+}
+
+.associationLink {
+  color: #1678a2;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 12px;
+  padding: 0;
+}
+
+.associationLink:hover {
+  text-decoration: underline;
+  color: #123047;
 }
 
 /* Record workspace: sidebar widget header */

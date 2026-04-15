@@ -25,6 +25,8 @@ export type EntityRecord = {
   taxClassification: string;
   ownerTeam: string;
   scopeIds: string[];
+  associatedFundIds: string[];
+  associatedDealIds: string[];
   structureSummary: string;
   requestCount: number;
   documentCount: number;

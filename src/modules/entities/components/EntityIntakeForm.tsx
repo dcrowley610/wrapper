@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import type { EntityRecord } from '../types/entity.types';
+import { fundsService } from '../../home/services/funds.service';
+import { dealsService } from '../../deals/services/deals.service';
 import styles from '../EntitiesModule.module.css';
 
 type EntityIntakeFormProps = {
   onSubmit: (entity: EntityRecord) => void;
   onCancel: () => void;
+  scopeIds?: string[];
 };
 
 const CATEGORY_OPTIONS = ['Fund Vehicle', 'Blocker', 'Operating Company', 'Holding Company', 'Third-Party'] as const;
 const STATUS_OPTIONS = ['Active', 'Pending Review', 'Inactive'] as const;
 
-export function EntityIntakeForm({ onSubmit, onCancel }: EntityIntakeFormProps) {
+export function EntityIntakeForm({ onSubmit, onCancel, scopeIds = [] }: EntityIntakeFormProps) {
   const [name, setName] = useState('');
   const [legalName, setLegalName] = useState('');
   const [category, setCategory] = useState<string>(CATEGORY_OPTIONS[0]);
@@ -34,6 +37,40 @@ export function EntityIntakeForm({ onSubmit, onCancel }: EntityIntakeFormProps) 
   const [registeredAgent, setRegisteredAgent] = useState('');
   const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [associatedFundIds, setAssociatedFundIds] = useState<string[]>([]);
+  const [associatedDealIds, setAssociatedDealIds] = useState<string[]>([]);
+
+  const allFunds = fundsService.getFunds();
+  const allDeals = dealsService.getAccessibleDeals();
+
+  const showFundSelector = category === 'Fund Vehicle' || category === 'Holding Company' || category === 'Blocker';
+  const showDealSelector = category === 'Operating Company' || category === 'Holding Company' || category === 'Blocker';
+  const fundSingleSelect = category === 'Fund Vehicle';
+
+  function handleFundToggle(fundId: string) {
+    if (fundSingleSelect) {
+      setAssociatedFundIds([fundId]);
+    } else {
+      setAssociatedFundIds(prev =>
+        prev.includes(fundId) ? prev.filter(id => id !== fundId) : [...prev, fundId]
+      );
+    }
+  }
+
+  function handleDealToggle(dealId: string) {
+    setAssociatedDealIds(prev =>
+      prev.includes(dealId) ? prev.filter(id => id !== dealId) : [...prev, dealId]
+    );
+  }
+
+  function deriveScopeIds(): string[] {
+    const ids = new Set<string>(scopeIds);
+    for (const fid of associatedFundIds) {
+      const fund = allFunds.find(f => f.id === fid);
+      if (fund) ids.add(fund.scopeId);
+    }
+    return Array.from(ids);
+  }
 
   function handleSubmit() {
     if (!name.trim()) return;
@@ -47,7 +84,9 @@ export function EntityIntakeForm({ onSubmit, onCancel }: EntityIntakeFormProps) 
       status: status as EntityRecord['status'],
       taxClassification: taxClassification.trim(),
       ownerTeam: ownerTeam.trim(),
-      scopeIds: [],
+      scopeIds: deriveScopeIds(),
+      associatedFundIds: showFundSelector ? associatedFundIds : [],
+      associatedDealIds: showDealSelector ? associatedDealIds : [],
       structureSummary: structureSummary.trim(),
       requestCount: 0,
       documentCount: 0,
@@ -93,6 +132,39 @@ export function EntityIntakeForm({ onSubmit, onCancel }: EntityIntakeFormProps) 
             {CATEGORY_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
         </div>
+        {showFundSelector && (
+          <div>
+            <label className={styles.fieldLabel}>{fundSingleSelect ? 'Associated Fund' : 'Associated Funds'}</label>
+            {fundSingleSelect ? (
+              <select className={styles.select} value={associatedFundIds[0] ?? ''} onChange={(e) => setAssociatedFundIds(e.target.value ? [e.target.value] : [])}>
+                <option value="">— Select fund —</option>
+                {allFunds.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {allFunds.map((f) => (
+                  <label key={f.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={associatedFundIds.includes(f.id)} onChange={() => handleFundToggle(f.id)} />
+                    {f.name}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+        {showDealSelector && (
+          <div>
+            <label className={styles.fieldLabel}>Associated Deals</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {allDeals.map((d) => (
+                <label key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+                  <input type="checkbox" checked={associatedDealIds.includes(d.id)} onChange={() => handleDealToggle(d.id)} />
+                  {d.name}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div>
           <label className={styles.fieldLabel}>Jurisdiction</label>
           <input className={styles.input} value={jurisdiction} onChange={(e) => setJurisdiction(e.target.value)} placeholder="e.g. Delaware" />

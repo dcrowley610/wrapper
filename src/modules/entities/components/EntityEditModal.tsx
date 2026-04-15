@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { EntityRecord, EntityCategory, EntityStatus } from '../types';
+import { fundsService } from '../../home/services/funds.service';
+import { dealsService } from '../../deals/services/deals.service';
 import styles from '../EntitiesModule.module.css';
 
 type EntityEditModalProps = {
@@ -38,14 +40,33 @@ export function EntityEditModal({ entity, onSave, onCancel }: EntityEditModalPro
     taxReportingStatus: entity.taxReportingStatus,
     annualRevenue: entity.annualRevenue,
     structureSummary: entity.structureSummary,
+    associatedFundIds: entity.associatedFundIds ?? [],
+    associatedDealIds: entity.associatedDealIds ?? [],
   });
+
+  const allFunds = fundsService.getFunds();
+  const allDeals = dealsService.getAccessibleDeals();
+
+  const showFundSelector = form.category === 'Fund Vehicle' || form.category === 'Holding Company' || form.category === 'Blocker';
+  const showDealSelector = form.category === 'Operating Company' || form.category === 'Holding Company' || form.category === 'Blocker';
+  const fundSingleSelect = form.category === 'Fund Vehicle';
 
   function handleSubmit() {
     if (!form.name.trim()) return;
-    const { stateFilingJurisdictions: sfjStr, ...rest } = form;
+    const { stateFilingJurisdictions: sfjStr, associatedFundIds: fundIds, associatedDealIds: dealIds, ...rest } = form;
+    const resolvedFundIds = showFundSelector ? fundIds : [];
+    const resolvedDealIds = showDealSelector ? dealIds : [];
+    const derivedScopeIds = new Set<string>(entity.scopeIds);
+    for (const fid of resolvedFundIds) {
+      const fund = allFunds.find(f => f.id === fid);
+      if (fund) derivedScopeIds.add(fund.scopeId);
+    }
     onSave(entity.id, {
       ...rest,
       stateFilingJurisdictions: sfjStr.split(',').map((s) => s.trim()).filter(Boolean),
+      associatedFundIds: resolvedFundIds,
+      associatedDealIds: resolvedDealIds,
+      scopeIds: Array.from(derivedScopeIds),
     });
   }
 
@@ -106,6 +127,39 @@ export function EntityEditModal({ entity, onSave, onCancel }: EntityEditModalPro
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
+          {showFundSelector && (
+            <div>
+              <label className={styles.fieldLabel}>{fundSingleSelect ? 'Associated Fund' : 'Associated Funds'}</label>
+              {fundSingleSelect ? (
+                <select className={styles.select} value={form.associatedFundIds[0] ?? ''} onChange={(e) => setForm((f) => ({ ...f, associatedFundIds: e.target.value ? [e.target.value] : [] }))}>
+                  <option value="">— Select fund —</option>
+                  {allFunds.map((fund) => <option key={fund.id} value={fund.id}>{fund.name}</option>)}
+                </select>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {allFunds.map((fund) => (
+                    <label key={fund.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+                      <input type="checkbox" checked={form.associatedFundIds.includes(fund.id)} onChange={() => setForm((f) => ({ ...f, associatedFundIds: f.associatedFundIds.includes(fund.id) ? f.associatedFundIds.filter(id => id !== fund.id) : [...f.associatedFundIds, fund.id] }))} />
+                      {fund.name}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {showDealSelector && (
+            <div>
+              <label className={styles.fieldLabel}>Associated Deals</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {allDeals.map((deal) => (
+                  <label key={deal.id} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={form.associatedDealIds.includes(deal.id)} onChange={() => setForm((f) => ({ ...f, associatedDealIds: f.associatedDealIds.includes(deal.id) ? f.associatedDealIds.filter(id => id !== deal.id) : [...f.associatedDealIds, deal.id] }))} />
+                    {deal.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <div>
             <label className={styles.fieldLabel}>Jurisdiction</label>
             <input className={styles.input} value={form.jurisdiction} onChange={(e) => setForm((f) => ({ ...f, jurisdiction: e.target.value }))} />

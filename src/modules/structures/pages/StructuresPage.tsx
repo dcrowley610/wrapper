@@ -20,7 +20,7 @@ function ScopedStructuresPage() {
   const [selectedEntity, setSelectedEntity] = useState<EntityData | null>(null);
   const [selectedDealId, setSelectedDealId] = useState<string>('all');
 
-  const allDeals = useMemo(() => dealsService.getAccessibleDeals(), []);
+  const allDeals = useMemo(() => dealsService.getScopedDeals(scopeSelection), [scopeSelection]);
   const dealId = selectedDealId === 'all' ? undefined : selectedDealId;
   const structureGraph = structuresApi.loadStructureGraph(scopeSelection, dealId);
 

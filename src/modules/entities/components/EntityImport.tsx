@@ -55,6 +55,8 @@ function parseRows(raw: Record<string, unknown>[]): EntityRecord[] {
       taxClassification: norm['taxclassification'] ?? norm['taxclass'] ?? '',
       ownerTeam: norm['ownerteam'] ?? norm['owner'] ?? '',
       scopeIds: [],
+      associatedFundIds: [],
+      associatedDealIds: [],
       structureSummary: norm['structuresummary'] ?? '',
       requestCount: 0,
       documentCount: 0,

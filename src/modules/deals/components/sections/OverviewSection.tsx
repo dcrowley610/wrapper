@@ -1,4 +1,5 @@
 import type { DealRecord } from '../../types';
+import { DealAssociationsSection } from './DealAssociationsSection';
 import { identityService } from '../../../identity/services';
 import styles from '../../DealsModule.module.css';
 
@@ -67,6 +68,8 @@ export function OverviewSection({ deal, onEdit }: OverviewSectionProps) {
           </ul>
         </div>
       )}
+      <div className={styles.sectionDivider} />
+      <DealAssociationsSection deal={deal} />
     </>
   );
 }

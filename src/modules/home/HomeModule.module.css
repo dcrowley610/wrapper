@@ -97,11 +97,11 @@
   background: #f0f7fc;
 }
 
-.fundTableRow td:first-child {
+.fundTableRow td:nth-child(2) {
   color: #6a7f90;
 }
 
-.fundTableRow td:nth-child(2) {
+.fundTableRow td:nth-child(3) {
   font-weight: 600;
 }
 
@@ -110,8 +110,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.fundTable th:nth-child(3),
-.fundTable th:nth-child(4) {
+.fundTable th:nth-child(4),
+.fundTable th:nth-child(6) {
   text-align: right;
 }
 
@@ -273,7 +273,7 @@
   text-align: right;
 }
 
-.fundTable th:nth-child(5) {
+.fundTable th:nth-child(6) {
   text-align: right;
 }
 
@@ -387,6 +387,132 @@
   justify-content: center;
   padding: 0 4px;
   line-height: 1;
+}
+
+/* Chevron expand button */
+.chevronBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #6a7f90;
+  cursor: pointer;
+  padding: 0;
+}
+
+.chevronBtn:hover {
+  background: #e2eef7;
+  color: #123047;
+}
+
+.chevronBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Expanded entity row */
+.expandedRow {
+  background: #f4f8fb;
+}
+
+.expandedRow td {
+  border-bottom: 1px solid #d9e6ee;
+}
+
+.expandedContent {
+  padding: 8px 16px 8px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entityItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.entityLink {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.entityLink:hover {
+  color: #1d4ed8;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.categoryFundVehicle {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.categoryHoldingCompany {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.categoryBlocker {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.categoryOperatingCompany {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.categoryThirdParty {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusActive {
+  background: #16a34a;
+}
+
+.statusPending {
+  background: #f59e0b;
+}
+
+.statusInactive {
+  background: #94a3b8;
+}
+
+.entityStatus {
+  font-size: 11px;
+  color: #6a7f90;
 }
 
 @media (max-width: 720px) {

@@ -6,6 +6,7 @@ import {
 } from 'react';
 import { PlatformContext } from './platformContext.shared';
 import { useFundsVersion } from '../../modules/home/hooks/useFundsVersion';
+import { useDealsVersion } from '../../modules/deals/hooks/useDealsVersion';
 import {
   MOCK_SCOPE_OPTIONS,
   SCOPE_DIMENSIONS,
@@ -19,6 +20,7 @@ import {
 
 export function PlatformProvider({ children }: PropsWithChildren) {
   const fundsVersion = useFundsVersion();
+  const dealsVersion = useDealsVersion();
   const [scopeSelection, setScopeSelection] = useState<ScopeSelection>(DEFAULT_SCOPE_SELECTION);
   const [navigationTarget, setNavigationTarget] = useState<NavigationTarget>(null);
 
@@ -69,7 +71,7 @@ export function PlatformProvider({ children }: PropsWithChildren) {
       navigationTarget,
       clearNavigationTarget,
     };
-  }, [scopeSelection, setSelectedScopeId, navigateTo, navigationTarget, clearNavigationTarget, fundsVersion]);
+  }, [scopeSelection, setSelectedScopeId, navigateTo, navigationTarget, clearNavigationTarget, fundsVersion, dealsVersion]);
 
   return <PlatformContext.Provider value={value}>{children}</PlatformContext.Provider>;
 }
