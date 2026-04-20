@@ -61,19 +61,19 @@ function makeMasterDeal(
 }
 
 let MASTERS: MasterRecord[] = [
-  makeMasterEntity('me-atlas-master-fund', 'Atlas Master Fund', 'Atlas Master Fund, L.P.', 'Cayman Islands', '98-7654321', 'Fund Vehicle', 'Partnership', ['atlas-master-fund', 'tax-year-2026', 'tax-year-2025']),
-  makeMasterEntity('me-atlas-blocker-lux', 'Atlas Blocker Lux', 'Atlas Blocker Lux S.a r.l.', 'Luxembourg', '98-1112233', 'Blocker', 'Corporation', ['atlas-blocker-lux', 'tax-year-2026', 'tax-year-2025']),
-  makeMasterEntity('me-smith-real-estate', 'Smith Real Estate LLC', 'Smith Real Estate LLC', 'Delaware', '47-5559876', 'Holding Company', 'Reverse Hybrid', ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026']),
-  makeMasterEntity('me-third-party', 'Third-Party Investors', 'Third-Party Investors', 'N/A', '', 'Third-Party', '', ['atlas-master-fund', 'tax-year-2026']),
-  makeMasterEntity('me-drip-ventures', 'Drip Ventures Inc', 'Drip Ventures Inc.', 'California', '82-4437891', 'Operating Company', 'Corporation', ['fed-state-compliance', 'tax-year-2026', 'atlas-master-fund']),
-  makeMasterInvestor('mi-northlight', 'Northlight Pension Trust', 'Northlight Pension Trust', 'Institutional', 'United States', 'EIN', '4321', ['atlas-master-fund', 'tax-year-2026', 'northlight-pension']),
-  makeMasterInvestor('mi-meridian', 'Meridian Family Office', 'Meridian Family Office Ltd', 'Family Office', 'United Kingdom', 'GIIN', '7890', ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026', 'meridian-family-office']),
-  makeMasterInvestor('mi-blue-harbor', 'Blue Harbor Feeder SPC', 'Blue Harbor Feeder SPC Ltd', 'Feeder', 'Cayman Islands', 'GIIN', '5566', ['atlas-blocker-lux', 'atlas-master-fund', 'tax-year-2026', 'blue-harbor-feeder']),
-  makeMasterInvestor('mi-alex-rivera', 'Alex Rivera', 'Alex Rivera', 'Individual', 'Canada', 'ITIN', '9012', ['tax-year-2026', 'atlas-master-fund', 'alex-rivera']),
-  makeMasterDeal('md-atlas-infra', 'Atlas Infrastructure Acquisition', 'Infrastructure', 'Infrastructure', 'North America', '2026-01-15', ['atlas-master-fund', 'tax-year-2026']),
-  makeMasterDeal('md-atlas-lux-debt', 'Atlas Lux Debt Facility', 'Debt', 'Financial Services', 'Europe', '', ['atlas-blocker-lux', 'tax-year-2026']),
-  makeMasterDeal('md-brep-ix-realty', 'BREP IX Realty Equity', 'Real Estate', 'Real Estate', 'North America', '2025-11-30', ['brep-ix', 'tax-year-2026']),
-  makeMasterDeal('md-smith-re-equity', 'Smith RE Equity Rollup', 'Equity', 'Real Estate', 'North America', '2026-02-28', ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026']),
+  makeMasterEntity('me-atlas-master-fund', 'Atlas Master Fund', 'Atlas Master Fund, L.P.', 'Cayman Islands', '98-7654321', 'Fund Vehicle', 'Partnership', ['bip-i', 'tax-year-2026', 'tax-year-2025']),
+  makeMasterEntity('me-atlas-blocker-lux', 'Atlas Blocker Lux', 'Atlas Blocker Lux S.a r.l.', 'Luxembourg', '98-1112233', 'Blocker', 'Corporation', ['bx-infra-i', 'tax-year-2026', 'tax-year-2025']),
+  makeMasterEntity('me-smith-real-estate', 'Smith Real Estate LLC', 'Smith Real Estate LLC', 'Delaware', '47-5559876', 'Holding Company', 'Reverse Hybrid', ['bip-i', 'fed-state-compliance', 'tax-year-2026']),
+  makeMasterEntity('me-third-party', 'Third-Party Investors', 'Third-Party Investors', 'N/A', '', 'Third-Party', '', ['bip-i', 'tax-year-2026']),
+  makeMasterEntity('me-drip-ventures', 'Drip Ventures Inc', 'Drip Ventures Inc.', 'California', '82-4437891', 'Investment Level', 'Corporation', ['fed-state-compliance', 'tax-year-2026', 'bip-i']),
+  makeMasterInvestor('mi-northlight', 'Northlight Pension Trust', 'Northlight Pension Trust', 'Institutional', 'United States', 'EIN', '4321', ['bip-i', 'tax-year-2026', 'northlight-pension']),
+  makeMasterInvestor('mi-meridian', 'Meridian Family Office', 'Meridian Family Office Ltd', 'Family Office', 'United Kingdom', 'GIIN', '7890', ['bip-i', 'fed-state-compliance', 'tax-year-2026', 'meridian-family-office']),
+  makeMasterInvestor('mi-blue-harbor', 'Blue Harbor Feeder SPC', 'Blue Harbor Feeder SPC Ltd', 'Feeder', 'Cayman Islands', 'GIIN', '5566', ['bx-infra-i', 'bip-i', 'tax-year-2026', 'blue-harbor-feeder']),
+  makeMasterInvestor('mi-alex-rivera', 'Alex Rivera', 'Alex Rivera', 'Individual', 'Canada', 'ITIN', '9012', ['tax-year-2026', 'bip-i', 'alex-rivera']),
+  makeMasterDeal('md-atlas-infra', 'Atlas Infrastructure Acquisition', 'Infrastructure', 'Infrastructure', 'North America', '2026-01-15', ['bip-i', 'tax-year-2026']),
+  makeMasterDeal('md-atlas-lux-debt', 'Atlas Lux Debt Facility', 'Debt', 'Financial Services', 'Europe', '', ['bx-infra-i', 'tax-year-2026']),
+  makeMasterDeal('md-brep-ix-realty', 'BREP IX Realty Equity', 'Real Estate', 'Real Estate', 'North America', '2025-11-30', ['blackstone-re-ix', 'tax-year-2026']),
+  makeMasterDeal('md-smith-re-equity', 'Smith RE Equity Rollup', 'Equity', 'Real Estate', 'North America', '2026-02-28', ['bip-i', 'fed-state-compliance', 'tax-year-2026']),
 ];
 
 // ── Seed Aliases (one per master — canonical name itself) ──

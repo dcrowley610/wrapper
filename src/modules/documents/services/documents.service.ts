@@ -1,6 +1,7 @@
 import type { ScopeSelection } from '../../../platform/context';
 import { matchesScope } from '../../../platform/context';
 import type { DocumentRecord } from '../types';
+import { entitiesService } from '../../entities/services/entities.service';
 
 const DOCUMENT_RECORDS: DocumentRecord[] = [
   {
@@ -15,7 +16,7 @@ const DOCUMENT_RECORDS: DocumentRecord[] = [
     uploadedBy: 'Sarah Chen',
     uploadDate: '2026-03-10',
     taxYear: '2025',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'tax-year-2025'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'tax-year-2025'],
     extractedFields: [
       { id: 'k1-f1', label: 'Partner Name', extractedValue: 'Atlas Master Fund LP', confirmedValue: null, status: 'pending', confidence: 0.98, overrideExplanation: null },
       { id: 'k1-f2', label: 'TIN', extractedValue: '98-7654321', confirmedValue: null, status: 'pending', confidence: 0.95, overrideExplanation: null },
@@ -50,7 +51,7 @@ const DOCUMENT_RECORDS: DocumentRecord[] = [
     uploadedBy: 'James Park',
     uploadDate: '2026-02-28',
     taxYear: '2025',
-    scopeIds: ['atlas-blocker-lux', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bx-infra-i', 'tax-year-2026', 'fed-state-compliance'],
     extractedFields: [
       { id: 'w8-f1', label: 'Beneficial Owner Name', extractedValue: 'Cayman Feeder LP', confirmedValue: null, status: 'pending', confidence: 0.97, overrideExplanation: null },
       { id: 'w8-f2', label: 'Country of Citizenship', extractedValue: 'Cayman Islands', confirmedValue: null, status: 'pending', confidence: 0.99, overrideExplanation: null },
@@ -82,7 +83,7 @@ const DOCUMENT_RECORDS: DocumentRecord[] = [
     uploadedBy: 'David Kim',
     uploadDate: '2026-03-15',
     taxYear: '2024',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance', 'tax-year-2024'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance', 'tax-year-2024'],
     extractedFields: [
       { id: 'ny-f1', label: 'Notice Number', extractedValue: 'DTF-2026-0042871', confirmedValue: null, status: 'pending', confidence: 0.99, overrideExplanation: null },
       { id: 'ny-f2', label: 'Entity Name', extractedValue: 'Smith Real Estate LLC', confirmedValue: null, status: 'pending', confidence: 0.97, overrideExplanation: null },
@@ -115,7 +116,7 @@ const DOCUMENT_RECORDS: DocumentRecord[] = [
     uploadedBy: 'Fund Operations',
     uploadDate: '2026-03-08',
     taxYear: '2025',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'tax-year-2025'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'tax-year-2025'],
     extractedFields: [
       { id: 'alloc-f1', label: 'Total Partners', extractedValue: '47', confirmedValue: null, status: 'pending', confidence: 0.99, overrideExplanation: null },
       { id: 'alloc-f2', label: 'Total Allocation %', extractedValue: '99.97%', confirmedValue: null, status: 'pending', confidence: 0.95, overrideExplanation: null },
@@ -139,7 +140,18 @@ export const documentsService = {
   },
 
   getScopedDocuments(selection: ScopeSelection): DocumentRecord[] {
-    return DOCUMENT_RECORDS.filter((doc) => matchesScope(doc.scopeIds, selection));
+    return DOCUMENT_RECORDS.filter((doc) => {
+      if (!matchesScope(doc.scopeIds, selection)) return false;
+      if (selection.entityCategoryIds.length > 0) {
+        const candidateEntityIds = new Set<string>([doc.entityId, ...doc.linkedEntities.map((l) => l.entityId)]);
+        const hasMatchingEntity = [...candidateEntityIds].some((entityId) => {
+          const entity = entitiesService.getAccessibleEntityById(entityId);
+          return entity ? selection.entityCategoryIds.includes(entity.category) : false;
+        });
+        if (!hasMatchingEntity) return false;
+      }
+      return true;
+    });
   },
 
   getDocumentById(id: string): DocumentRecord | undefined {

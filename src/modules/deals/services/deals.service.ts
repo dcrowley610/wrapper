@@ -1,6 +1,7 @@
 import type { ScopeSelection, ScopeDimensionOption } from '../../../platform/context';
 import { matchesScope } from '../../../platform/context';
 import type { DealRecord } from '../types';
+import { entitiesService } from '../../entities/services/entities.service';
 
 let DEAL_RECORDS: DealRecord[] = [
   {
@@ -12,7 +13,7 @@ let DEAL_RECORDS: DealRecord[] = [
     taxYear: '2026',
     status: 'Active',
     linkedEntityIds: ['atlas-master-fund', 'smith-real-estate-llc'],
-    scopeIds: ['atlas-master-fund', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'tax-year-2026'],
     requestCount: 3,
     documentCount: 8,
     openQuestions: 1,
@@ -43,7 +44,7 @@ let DEAL_RECORDS: DealRecord[] = [
     taxYear: '2026',
     status: 'Pending Review',
     linkedEntityIds: ['atlas-blocker-lux'],
-    scopeIds: ['atlas-blocker-lux', 'tax-year-2026'],
+    scopeIds: ['bx-infra-i', 'tax-year-2026'],
     requestCount: 2,
     documentCount: 5,
     openQuestions: 3,
@@ -106,7 +107,7 @@ let DEAL_RECORDS: DealRecord[] = [
     taxYear: '2026',
     status: 'Closed',
     linkedEntityIds: ['smith-real-estate-llc', 'drip-ventures-inc'],
-    scopeIds: ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'fed-state-compliance', 'tax-year-2026'],
     requestCount: 1,
     documentCount: 4,
     openQuestions: 0,
@@ -577,7 +578,17 @@ export const dealsService = {
   },
 
   getScopedDeals(selection: ScopeSelection): DealRecord[] {
-    return DEAL_RECORDS.filter((deal) => matchesScope(deal.scopeIds, selection));
+    return DEAL_RECORDS.filter((deal) => {
+      if (!matchesScope(deal.scopeIds, selection)) return false;
+      if (selection.entityCategoryIds.length > 0) {
+        const hasMatchingEntity = deal.linkedEntityIds.some((entityId) => {
+          const entity = entitiesService.getAccessibleEntityById(entityId);
+          return entity ? selection.entityCategoryIds.includes(entity.category) : false;
+        });
+        if (!hasMatchingEntity) return false;
+      }
+      return true;
+    });
   },
 
   getAccessibleDealById(id: string): DealRecord | undefined {

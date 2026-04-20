@@ -14,7 +14,7 @@ const CONTROVERSY_RECORDS: ControversyRecord[] = [
     responseDeadline: '2026-04-11',
     assignedTeam: 'Fund Tax',
     assignedTo: 'Sarah Chen',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'tax-year-2024'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'tax-year-2024'],
     summary:
       'Proposed adjustment to Schedule K-1 reporting for TY 2024. IRS asserts underreported interest income of $1.2M based on third-party 1099 matching.',
     amountAtIssue: '$1,200,000',
@@ -55,7 +55,7 @@ const CONTROVERSY_RECORDS: ControversyRecord[] = [
     responseDeadline: '2026-05-15',
     assignedTeam: 'Tax Operations',
     assignedTo: 'David Kim',
-    scopeIds: ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026', 'tax-year-2024'],
+    scopeIds: ['bip-i', 'fed-state-compliance', 'tax-year-2026', 'tax-year-2024'],
     summary:
       'Full scope audit of NY source income and apportionment for TY 2023–2024. Examiner has requested property schedules, rent rolls, and allocation methodologies.',
     amountAtIssue: '$3,400,000',
@@ -96,7 +96,7 @@ const CONTROVERSY_RECORDS: ControversyRecord[] = [
     responseDeadline: '2026-04-22',
     assignedTeam: 'Portfolio Reporting',
     assignedTo: 'Maria Lopez',
-    scopeIds: ['fed-state-compliance', 'tax-year-2026', 'atlas-master-fund', 'tax-year-2024'],
+    scopeIds: ['fed-state-compliance', 'tax-year-2026', 'bip-i', 'tax-year-2024'],
     summary:
       'Limited scope exam focused on R&D credit claimed on 2024 CA return. FTB requests documentation of qualified research activities and expenditures.',
     amountAtIssue: '$450,000',
@@ -135,7 +135,7 @@ const CONTROVERSY_RECORDS: ControversyRecord[] = [
     responseDeadline: '2026-06-05',
     assignedTeam: 'International Tax',
     assignedTo: 'Sarah Chen',
-    scopeIds: ['atlas-blocker-lux', 'tax-year-2026'],
+    scopeIds: ['bx-infra-i', 'tax-year-2026'],
     summary:
       'Transfer pricing review of management fees and intercompany loan arrangements between Atlas Blocker Lux and Atlas Master Fund for TY 2023.',
     amountAtIssue: '$2,100,000',

@@ -1,7 +1,7 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformContext } from '../../../platform/context';
-import { DealCard } from '../components/DealCard';
+import { useFundViewProfile } from '../../../platform/hooks/useFundViewProfile';
 import { DealTable, ALL_DEAL_COLUMNS, DEFAULT_DEAL_COLUMNS } from '../components/DealTable';
 import { ColumnPicker } from '../../../components/ColumnPicker/ColumnPicker';
 import { MultiSelectDropdown } from '../../../components/MultiSelectDropdown';
@@ -18,58 +18,114 @@ import styles from '../DealsModule.module.css';
 
 const DealImport = lazy(() => import('../components/DealImport').then((m) => ({ default: m.DealImport })));
 
-type ViewMode = 'table' | 'cards';
+const GLOBAL_COLUMNS_KEY = 'deal-visible-columns';
+
+function baseFilterDefaults(): Record<string, string> {
+  return {
+    status: DEAL_FILTERS[0].options[0],
+    investmentType: DEAL_FILTERS[1].options[0],
+  };
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 export function DealListPage() {
   const { scopeSelection } = usePlatformContext();
+  const profile = useFundViewProfile();
   const navigate = useNavigate();
+
+  const dealTerm = profile?.dealList?.terminology?.deal ?? 'deal';
+  const dealsTerm = profile?.dealList?.terminology?.dealPlural ?? 'deals';
+  const DealTerm = capitalize(dealTerm);
+  const DealsTerm = capitalize(dealsTerm);
+
+  const availableColumnDefs = useMemo(() => {
+    const hidden = new Set(profile?.dealList?.hiddenColumns ?? []);
+    return ALL_DEAL_COLUMNS.filter((c) => !hidden.has(c.key));
+  }, [profile]);
+
+  const availableKeysSet = useMemo(
+    () => new Set(availableColumnDefs.map((c) => c.key)),
+    [availableColumnDefs],
+  );
+
+  const dealDefaultColumns = useMemo(() => {
+    const fromProfile = profile?.dealList?.defaultColumns?.filter((id) => availableKeysSet.has(id));
+    if (fromProfile && fromProfile.length > 0) return fromProfile;
+    return DEFAULT_DEAL_COLUMNS.filter((id) => availableKeysSet.has(id));
+  }, [profile, availableKeysSet]);
+
+  const storageKey = useMemo(() => {
+    return scopeSelection.fundIds.length === 1
+      ? `${GLOBAL_COLUMNS_KEY}:${scopeSelection.fundIds[0]}`
+      : GLOBAL_COLUMNS_KEY;
+  }, [scopeSelection.fundIds]);
+
+  const readStoredColumns = useCallback(
+    (key: string): string[] | null => {
+      const stored = localStorage.getItem(key);
+      if (!stored) return null;
+      try {
+        const parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed)) return null;
+        return parsed.filter((id): id is string => typeof id === 'string' && availableKeysSet.has(id));
+      } catch {
+        return null;
+      }
+    },
+    [availableKeysSet],
+  );
+
   const [searchValue, setSearchValue] = useState('');
-  const [filters, setFilters] = useState<Record<string, string>>({
-    status: DEAL_FILTERS[0].options[0],
-    investmentType: DEAL_FILTERS[1].options[0],
-  });
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [filters, setFilters] = useState<Record<string, string>>(() => ({
+    ...baseFilterDefaults(),
+    ...(profile?.dealList?.defaultFilters ?? {}),
+  }));
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [editTargetId, setEditTargetId] = useState<string | null>(null);
   const [commentTargetId, setCommentTargetId] = useState<string | null>(null);
   const [showIntake, setShowIntake] = useState(false);
   const [showImport, setShowImport] = useState(false);
-
-  const [selectedDeals, setSelectedDeals] = useState<string[]>([]);
   const [selectedFunds, setSelectedFunds] = useState<string[]>([]);
-  const [selectedYears, setSelectedYears] = useState<string[]>([]);
-  const [selectedInvestors, setSelectedInvestors] = useState<string[]>([]);
 
-  const STORAGE_KEY = 'deal-visible-columns';
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : DEFAULT_DEAL_COLUMNS;
+    return readStoredColumns(storageKey) ?? dealDefaultColumns;
   });
 
-  function handleColumnsChange(keys: string[]) {
-    setVisibleColumns(keys);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
-  }
+  // Re-seed columns when fund scope (→ storageKey) or the fund's profile defaults change.
+  useEffect(() => {
+    setVisibleColumns(readStoredColumns(storageKey) ?? dealDefaultColumns);
+  }, [storageKey, dealDefaultColumns, readStoredColumns]);
+
+  // Re-seed filters when the selected fund changes; preserves user edits within a selection.
+  useEffect(() => {
+    setFilters({
+      ...baseFilterDefaults(),
+      ...(profile?.dealList?.defaultFilters ?? {}),
+    });
+  }, [profile]);
+
+  const handleColumnsChange = useCallback(
+    (keys: string[]) => {
+      const validated = keys.filter((k) => availableKeysSet.has(k));
+      setVisibleColumns(validated);
+      localStorage.setItem(storageKey, JSON.stringify(validated));
+    },
+    [availableKeysSet, storageKey],
+  );
+
+  const effectiveVisibleColumns = useMemo(
+    () => visibleColumns.filter((k) => availableKeysSet.has(k)),
+    [visibleColumns, availableKeysSet],
+  );
 
   const version = useDealsVersion();
 
-  const allDeals = useMemo(() => dealsService.getAccessibleDeals(), [version]);
-
-  const dealOptions = useMemo(
-    () => allDeals.map((d) => ({ value: d.id, label: d.name })),
-    [allDeals],
-  );
   const fundOptions = useMemo(
     () => SCOPE_DIMENSIONS.fund.map((f) => ({ value: f.id, label: f.label })),
-    [],
-  );
-  const yearOptions = useMemo(
-    () => SCOPE_DIMENSIONS.taxYear.map((y) => ({ value: y.id, label: y.label })),
-    [],
-  );
-  const investorOptions = useMemo(
-    () => SCOPE_DIMENSIONS.investor.map((i) => ({ value: i.id, label: i.label })),
     [],
   );
 
@@ -85,14 +141,11 @@ export function DealListPage() {
       const matchesStatus = filters.status === 'All statuses' || deal.status === filters.status;
       const matchesType = filters.investmentType === 'All types' || deal.investmentType === filters.investmentType;
 
-      const matchesDeal = selectedDeals.length === 0 || selectedDeals.includes(deal.id);
       const matchesFund = selectedFunds.length === 0 || deal.scopeIds.some((id) => selectedFunds.includes(id));
-      const matchesYear = selectedYears.length === 0 || deal.scopeIds.some((id) => selectedYears.includes(id));
-      const matchesInvestor = selectedInvestors.length === 0 || deal.scopeIds.some((id) => selectedInvestors.includes(id));
 
-      return matchesSearch && matchesStatus && matchesType && matchesDeal && matchesFund && matchesYear && matchesInvestor;
+      return matchesSearch && matchesStatus && matchesType && matchesFund;
     });
-  }, [scopeSelection, searchValue, filters, selectedDeals, selectedFunds, selectedYears, selectedInvestors, version]);
+  }, [scopeSelection, searchValue, filters, selectedFunds, version]);
 
   const sortedDeals = useMemo(() => {
     const sorted = [...visibleDeals];
@@ -117,7 +170,7 @@ export function DealListPage() {
   }
   function handleEdit(id: string) { setEditTargetId(id); }
   function handleDelete(id: string) {
-    if (window.confirm('Delete this deal?')) {
+    if (window.confirm(`Delete this ${dealTerm}?`)) {
       dealsService.deleteDeal(id);
     }
   }
@@ -166,20 +219,20 @@ export function DealListPage() {
         <div className={styles.heroCard}>
           <div className={styles.heroCardInner}>
             <div>
-              <div className={styles.eyebrow}>Deal Workspace</div>
-              <h1 className={styles.title}>Deals with ownership, income, and investment detail.</h1>
+              <div className={styles.eyebrow}>{DealTerm} Workspace</div>
+              <h1 className={styles.title}>{DealsTerm} with ownership, income, and investment detail.</h1>
               <p className={styles.lead}>
-                Click into any deal to open the deal workspace with ownership, tax, and entity detail.
+                Click into any {dealTerm} to open the {dealTerm} workspace with ownership, tax, and entity detail.
               </p>
             </div>
             <div className={styles.heroActions}>
-              <button className={styles.heroActionBtn} onClick={() => setShowIntake(true)} type="button">+ New deal</button>
+              <button className={styles.heroActionBtn} onClick={() => setShowIntake(true)} type="button">+ New {dealTerm}</button>
               <button className={styles.heroActionBtn} onClick={() => setShowImport(true)} type="button">Import</button>
               <ColumnPicker
-                columns={ALL_DEAL_COLUMNS.filter((c) => c.key !== 'name')}
-                visibleKeys={visibleColumns}
+                columns={availableColumnDefs.filter((c) => c.key !== 'name')}
+                visibleKeys={effectiveVisibleColumns}
                 onChange={handleColumnsChange}
-                defaultKeys={DEFAULT_DEAL_COLUMNS}
+                defaultKeys={dealDefaultColumns}
               />
             </div>
           </div>
@@ -218,27 +271,10 @@ export function DealListPage() {
       )}
 
       <section className={styles.workspace}>
-        <div className={styles.viewToggle}>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'table' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => setViewMode('table')}
-            type="button"
-          >
-            Table
-          </button>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'cards' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => setViewMode('cards')}
-            type="button"
-          >
-            Cards
-          </button>
-        </div>
-
         <div className={styles.toolbar}>
           <div className={styles.searchWrap}>
             <label className={styles.fieldLabel} htmlFor="deal-search">
-              Search deals
+              Search {dealsTerm}
             </label>
             <input
               id="deal-search"
@@ -268,40 +304,25 @@ export function DealListPage() {
                 </select>
               </label>
             ))}
-            <MultiSelectDropdown label="Deal" options={dealOptions} selected={selectedDeals} onChange={setSelectedDeals} />
             <MultiSelectDropdown label="Fund" options={fundOptions} selected={selectedFunds} onChange={setSelectedFunds} />
-            <MultiSelectDropdown label="Tax Year" options={yearOptions} selected={selectedYears} onChange={setSelectedYears} />
-            <MultiSelectDropdown label="Investor" options={investorOptions} selected={selectedInvestors} onChange={setSelectedInvestors} />
           </div>
         </div>
 
-        {viewMode === 'table' ? (
-          sortedDeals.length > 0 ? (
-            <DealTable
-              deals={sortedDeals}
-              sortKey={sortKey}
-              sortDirection={sortDir}
-              onSort={handleSort}
-              onOpen={handleOpenDeal}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onComment={handleComment}
-              visibleColumns={visibleColumns}
-              onColumnsChange={handleColumnsChange}
-            />
-          ) : (
-            <div className={styles.emptyState}>No deals match this scope and filter combination yet.</div>
-          )
+        {sortedDeals.length > 0 ? (
+          <DealTable
+            deals={sortedDeals}
+            sortKey={sortKey}
+            sortDirection={sortDir}
+            onSort={handleSort}
+            onOpen={handleOpenDeal}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onComment={handleComment}
+            visibleColumns={effectiveVisibleColumns}
+            onColumnsChange={handleColumnsChange}
+          />
         ) : (
-          <div className={styles.recordGrid}>
-            {visibleDeals.length > 0 ? (
-              visibleDeals.map((deal) => (
-                <DealCard key={deal.id} deal={deal} onOpen={handleOpenDeal} />
-              ))
-            ) : (
-              <div className={styles.emptyState}>No deals match this scope and filter combination yet.</div>
-            )}
-          </div>
+          <div className={styles.emptyState}>No {dealsTerm} match this scope and filter combination yet.</div>
         )}
 
         {editTargetId && (() => {

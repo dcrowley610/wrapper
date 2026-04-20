@@ -55,6 +55,14 @@ export function ScopePicker() {
         onChange={(ids) => updateDimension('dealIds', ids)}
         placeholder
       />
+      <DimensionDropdown
+        label="Entity Type"
+        options={scopeDimensions.entityCategory}
+        selectedIds={scopeSelection.entityCategoryIds}
+        allLabel="All Entity Types"
+        onChange={(ids) => updateDimension('entityCategoryIds', ids)}
+        placeholder
+      />
       <PresetMenu
         presets={scopePresets}
         onSelect={setScopeSelection}

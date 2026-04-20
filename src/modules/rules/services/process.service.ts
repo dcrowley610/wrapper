@@ -75,7 +75,7 @@ const PROCESS_TEMPLATES: ProcessTemplate[] = [
     createdBy: 'Tax Manager',
     createdDate: '2025-11-01',
     lastModifiedDate: '2026-01-15',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance'],
   },
   {
     id: 'PTPL-002',
@@ -132,7 +132,7 @@ const PROCESS_TEMPLATES: ProcessTemplate[] = [
     createdBy: 'International Tax',
     createdDate: '2026-01-10',
     lastModifiedDate: '2026-01-10',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'tax-year-2026'],
   },
   {
     id: 'PTPL-003',
@@ -189,7 +189,7 @@ const PROCESS_TEMPLATES: ProcessTemplate[] = [
     createdBy: 'Tax Operations',
     createdDate: '2026-02-01',
     lastModifiedDate: '2026-02-01',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance'],
   },
 ];
 
@@ -215,7 +215,7 @@ const PROCESS_RUNS: ProcessRun[] = [
     completedDate: null,
     createdDate: '2026-02-20',
     lastUpdatedDate: '2026-03-10',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance'],
     steps: [
       {
         id: 'PRS-001-1',
@@ -428,7 +428,7 @@ const PROCESS_RUNS: ProcessRun[] = [
     completedDate: null,
     createdDate: '2026-03-05',
     lastUpdatedDate: '2026-03-20',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'tax-year-2026'],
     steps: [
       {
         id: 'PRS-002-1',
@@ -562,7 +562,7 @@ const PROCESS_RUNS: ProcessRun[] = [
     completedDate: null,
     createdDate: '2026-03-18',
     lastUpdatedDate: '2026-03-18',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance'],
     steps: [
       {
         id: 'PRS-003-1',

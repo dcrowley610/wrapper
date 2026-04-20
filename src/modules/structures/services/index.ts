@@ -23,7 +23,7 @@ function mapEntityType(record: EntityRecord): EntityNode['data']['entityType'] {
       return 'corporation';
     case 'Holding Company':
       return 'llc';
-    case 'Operating Company':
+    case 'Investment Level':
       return 'corporation';
     case 'Third-Party':
       return 'corporation';

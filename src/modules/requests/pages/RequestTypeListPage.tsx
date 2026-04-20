@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import type { RequestProcess, RequestProcessFormState, RequestCategory, RequestCategoryFormState } from '../types';
-import { FREQUENCY_LABEL, DOMAIN_OPTIONS, addDomain, renameDomain } from '../config';
+import { addDomain, renameDomain } from '../config';
 import { requestTypesService, requestCategoriesService, requestPlaybooksService } from '../services';
 import { RequestProcessCard } from '../components/RequestTypeCard';
 import { RequestProcessForm } from '../components/RequestTypeForm';
@@ -54,17 +54,17 @@ export function RequestLibraryPage() {
     return map;
   }, [filteredProcesses]);
 
-  function handleCreateProcess(form: RequestProcessFormState) {
+  function handleCreateProcess(_form: RequestProcessFormState) {
     setShowCreateProcess(false);
     setModalFullscreen(false);
   }
 
-  function handleCreateCategory(form: RequestCategoryFormState) {
+  function handleCreateCategory(_form: RequestCategoryFormState) {
     setShowCreateCategory(false);
     setModalFullscreen(false);
   }
 
-  function handleEditCategory(form: RequestCategoryFormState) {
+  function handleEditCategory(_form: RequestCategoryFormState) {
     setEditingCategory(null);
     setModalFullscreen(false);
   }

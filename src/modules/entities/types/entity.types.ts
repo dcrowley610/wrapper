@@ -1,7 +1,7 @@
 import type { RecordComment } from '../../../types/comment';
 
 export type EntityStatus = 'Active' | 'Pending Review' | 'Inactive';
-export type EntityCategory = 'Fund Vehicle' | 'Blocker' | 'Operating Company' | 'Holding Company' | 'Third-Party';
+export type EntityCategory = 'Fund Vehicle' | 'Blocker' | 'Investment Level' | 'Holding Company' | 'Third-Party';
 
 export type ActivityEntry = {
   date: string;

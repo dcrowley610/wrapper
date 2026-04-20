@@ -16,7 +16,7 @@ type SortKey = 'fundFamily' | 'fund' | 'entities' | 'deals';
 type SortDir = 'asc' | 'desc';
 type FormMode = 'none' | 'addFamily' | 'addFund' | 'editFamily' | 'editFund';
 
-const CATEGORY_ORDER: EntityRecord['category'][] = ['Fund Vehicle', 'Holding Company', 'Blocker', 'Operating Company', 'Third-Party'];
+const CATEGORY_ORDER: EntityRecord['category'][] = ['Fund Vehicle', 'Holding Company', 'Blocker', 'Investment Level', 'Third-Party'];
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');

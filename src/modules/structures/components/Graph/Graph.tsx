@@ -17,7 +17,7 @@ import { getLayoutedElements } from '../../utils/layout';
 import { LayoutControls } from '../Controls/LayoutControls';
 import { Legend } from '../Legend/Legend';
 import type { EntityNode, OwnershipEdge, AnnotationEdge, EntityData } from '../../types';
-import { buildScene, generateAndDownloadPptx } from '../../export';
+import { buildScene } from '../../export';
 import styles from './Graph.module.css';
 
 interface GraphProps {
@@ -80,13 +80,14 @@ function GraphInner({
     [onNodeSelect],
   );
 
-  const handleExportPptx = useCallback(() => {
+  const handleExportPptx = useCallback(async () => {
     const title = window.prompt('Enter a title for the export (leave blank for none):', '') ?? '';
     const scene = buildScene(nodes as EntityNode[], initialEdges, initialAnnotationEdges, title);
     const filename = title.trim()
       ? `${title.replace(/\s+/g, '')}.pptx`
       : 'structure-chart.pptx';
-    generateAndDownloadPptx(scene, filename);
+    const { generateAndDownloadPptx } = await import('../../export/generatePptx');
+    await generateAndDownloadPptx(scene, filename);
   }, [nodes, initialEdges, initialAnnotationEdges]);
 
   return (

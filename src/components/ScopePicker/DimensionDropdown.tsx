@@ -20,7 +20,9 @@ export function DimensionDropdown({
   placeholder,
 }: DimensionDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const ref = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -31,6 +33,13 @@ export function DimensionDropdown({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      setQuery('');
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }, [open]);
 
   const isAll = selectedIds.length === 0;
 
@@ -61,6 +70,14 @@ export function DimensionDropdown({
 
   const isPlaceholder = placeholder && isAll;
 
+  const trimmedQuery = query.trim();
+  const filteredOptions =
+    trimmedQuery === ''
+      ? options
+      : options.filter((o) =>
+          o.label.toLowerCase().includes(trimmedQuery.toLowerCase()),
+        );
+
   return (
     <div className={styles.dimensionDropdown} ref={ref}>
       <button
@@ -75,27 +92,55 @@ export function DimensionDropdown({
 
       {open && (
         <div className={styles.dropdownMenu}>
-          <label className={styles.dropdownItem}>
+          <div className={styles.dropdownSearchWrapper}>
             <input
-              type="checkbox"
-              checked={isAll}
-              onChange={selectAll}
-              className={styles.checkbox}
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  if (query) {
+                    setQuery('');
+                    e.stopPropagation();
+                  } else {
+                    setOpen(false);
+                  }
+                }
+              }}
+              placeholder={`Search ${label.toLowerCase()}…`}
+              className={styles.dropdownSearch}
             />
-            <span className={styles.dropdownItemLabel}>{allLabel}</span>
-          </label>
-          <div className={styles.dropdownDivider} />
-          {options.map((opt) => (
-            <label key={opt.id} className={styles.dropdownItem}>
-              <input
-                type="checkbox"
-                checked={selectedIds.includes(opt.id)}
-                onChange={() => toggleId(opt.id)}
-                className={styles.checkbox}
-              />
-              <span className={styles.dropdownItemLabel}>{opt.label}</span>
-            </label>
-          ))}
+          </div>
+          {trimmedQuery === '' && (
+            <>
+              <label className={styles.dropdownItem}>
+                <input
+                  type="checkbox"
+                  checked={isAll}
+                  onChange={selectAll}
+                  className={styles.checkbox}
+                />
+                <span className={styles.dropdownItemLabel}>{allLabel}</span>
+              </label>
+              <div className={styles.dropdownDivider} />
+            </>
+          )}
+          {filteredOptions.length === 0 ? (
+            <div className={styles.dropdownEmpty}>No matches</div>
+          ) : (
+            filteredOptions.map((opt) => (
+              <label key={opt.id} className={styles.dropdownItem}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(opt.id)}
+                  onChange={() => toggleId(opt.id)}
+                  className={styles.checkbox}
+                />
+                <span className={styles.dropdownItemLabel}>{opt.label}</span>
+              </label>
+            ))
+          )}
         </div>
       )}
     </div>

@@ -1,9 +1,10 @@
 import type { ScopeSelection } from '../../../platform/context';
 import { matchesScope } from '../../../platform/context';
-import type { RequestInstance, RequestType, TemplateSnapshot, ExecutionMethod } from '../types';
+import type { RequestInstance, RequestType, TemplateSnapshot } from '../types';
 import { requestTypesService } from './requestTypes.service';
 import { requestPlaybooksService } from './requestPlaybooks.service';
 import { deliverableTemplatesService } from './deliverableTemplates.service';
+import { entitiesService } from '../../entities/services/entities.service';
 
 function snapshotFromType(type: RequestType): TemplateSnapshot {
   const playbook = requestPlaybooksService.getById(type.playbookId);
@@ -22,7 +23,7 @@ function snapshotFromType(type: RequestType): TemplateSnapshot {
 const REQUEST_RECORDS: RequestInstance[] = [
   {
     id: 'REQ-1042',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026', 'fed-state-compliance'],
+    scopeIds: ['bip-i', 'tax-year-2026', 'fed-state-compliance'],
     status: 'inReview',
     stage: 'Reviewer sign-off pending',
     title: 'Atlas Master Fund extension decision memo',
@@ -53,7 +54,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
     ],
     // --- Process-memory fields ---
     requestTypeId: 'RT-001',
-    fundId: 'atlas-master-fund',
+    fundId: 'bip-i',
     entityId: null,
     dealId: null,
     taxYear: '2026',
@@ -80,7 +81,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
   },
   {
     id: 'REQ-1038',
-    scopeIds: ['atlas-blocker-lux', 'tax-year-2026'],
+    scopeIds: ['bx-infra-i', 'tax-year-2026'],
     status: 'inProgress',
     stage: 'Documents and facts in flight',
     title: 'Lux blocker ECI and withholding support package',
@@ -115,7 +116,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
       { id: 'c3', author: 'Maria Lopez', text: 'The ECI analysis should reference the 2024 position paper — same intercompany loan structure applies.', timestamp: '2026-03-15 11:30' },
     ],
     requestTypeId: 'RT-002',
-    fundId: 'atlas-blocker-lux',
+    fundId: 'bx-infra-i',
     entityId: null,
     dealId: null,
     taxYear: '2026',
@@ -142,7 +143,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
   },
   {
     id: 'REQ-1031',
-    scopeIds: ['fed-state-compliance', 'tax-year-2026', 'atlas-master-fund'],
+    scopeIds: ['fed-state-compliance', 'tax-year-2026', 'bip-i'],
     status: 'assigned',
     stage: 'Owner and playbook selected',
     title: 'Q1 notice response triage for state composite filings',
@@ -167,7 +168,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
     ],
     comments: [],
     requestTypeId: 'RT-003',
-    fundId: 'atlas-master-fund',
+    fundId: 'bip-i',
     entityId: null,
     dealId: null,
     taxYear: '2026',
@@ -194,7 +195,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
   },
   {
     id: 'REQ-1027',
-    scopeIds: ['tax-year-2026', 'atlas-master-fund'],
+    scopeIds: ['tax-year-2026', 'bip-i'],
     status: 'new',
     stage: 'Waiting for assignment',
     title: '2026 estimated payments review across investment entities',
@@ -218,7 +219,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
     ],
     comments: [],
     requestTypeId: 'RT-004',
-    fundId: 'atlas-master-fund',
+    fundId: 'bip-i',
     entityId: null,
     dealId: null,
     taxYear: '2026',
@@ -246,7 +247,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
   // --- Prior-year record for demonstrating prior-period linkage ---
   {
     id: 'REQ-0819',
-    scopeIds: ['atlas-master-fund', 'tax-year-2025'],
+    scopeIds: ['bip-i', 'tax-year-2025'],
     status: 'completed',
     stage: 'Package delivered',
     title: 'Capital activity support package for investor reporting (2025)',
@@ -275,7 +276,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
       { id: 'cp1', author: 'Sarah Chen', text: 'The 2025 schedules required a manual reconciliation step due to a mid-year accounting system migration. This should not recur in 2026.', timestamp: '2025-03-13 10:45' },
     ],
     requestTypeId: 'RT-005',
-    fundId: 'atlas-master-fund',
+    fundId: 'bip-i',
     entityId: null,
     dealId: null,
     taxYear: '2025',
@@ -309,7 +310,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
   },
   {
     id: 'REQ-1019',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'tax-year-2026'],
     status: 'completed',
     stage: 'Package delivered',
     title: 'Capital activity support package for investor reporting',
@@ -337,7 +338,7 @@ const REQUEST_RECORDS: RequestInstance[] = [
     ],
     comments: [],
     requestTypeId: 'RT-005',
-    fundId: 'atlas-master-fund',
+    fundId: 'bip-i',
     entityId: null,
     dealId: null,
     taxYear: '2026',
@@ -391,7 +392,17 @@ export const requestsService = {
   },
 
   getScopedRequests(selection: ScopeSelection): RequestInstance[] {
-    return REQUEST_RECORDS.filter((r) => matchesScope(r.scopeIds, selection));
+    return REQUEST_RECORDS.filter((r) => {
+      if (!matchesScope(r.scopeIds, selection)) return false;
+      if (selection.entityCategoryIds.length > 0) {
+        const hasMatchingEntity = r.linkedEntities.some((link) => {
+          const entity = entitiesService.getAccessibleEntityById(link.entityId);
+          return entity ? selection.entityCategoryIds.includes(entity.category) : false;
+        });
+        if (!hasMatchingEntity) return false;
+      }
+      return true;
+    });
   },
 
   getRequestById(id: string): RequestInstance | undefined {

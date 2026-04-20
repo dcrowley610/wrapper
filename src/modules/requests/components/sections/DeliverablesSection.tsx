@@ -1,5 +1,5 @@
 import { Fragment, lazy, Suspense, useRef, useState } from 'react';
-import type { DeliverableInstance, DeliverableStatus, RequestComment, WorkflowRequest } from '../../types';
+import type { DeliverableInstance, DeliverableStatus, WorkflowRequest } from '../../types';
 import type { DetailAction } from '../../pages/RequestDetailPage';
 import { requestsService, deliverableTemplatesService } from '../../services';
 import styles from '../../RequestsModule.module.css';

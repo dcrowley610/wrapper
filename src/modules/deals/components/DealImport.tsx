@@ -62,7 +62,7 @@ function parseRows(raw: Record<string, unknown>[]): DealRecord[] {
       geographicFocus: norm['geographicfocus'] ?? norm['geography'] ?? '',
       sector: norm['sector'] ?? '',
       activityLog: [],
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       comments: [],
     });
   }

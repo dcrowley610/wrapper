@@ -1,8 +1,6 @@
 import { businessPhrasesAggressive } from './businessPhrases';
 import { convertRomanNumerals } from './romanNumerals';
 
-type StepResult = { output: string; transformations: string[] };
-
 export type ComparisonKeys = {
   comparisonKeyFull: string;
   comparisonKeyStripped: string;

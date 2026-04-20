@@ -11,7 +11,7 @@ type EntityEditModalProps = {
   onCancel: () => void;
 };
 
-const CATEGORIES: EntityCategory[] = ['Fund Vehicle', 'Blocker', 'Operating Company', 'Holding Company', 'Third-Party'];
+const CATEGORIES: EntityCategory[] = ['Fund Vehicle', 'Blocker', 'Investment Level', 'Holding Company', 'Third-Party'];
 const STATUSES: EntityStatus[] = ['Active', 'Pending Review', 'Inactive'];
 
 export function EntityEditModal({ entity, onSave, onCancel }: EntityEditModalProps) {
@@ -48,7 +48,7 @@ export function EntityEditModal({ entity, onSave, onCancel }: EntityEditModalPro
   const allDeals = dealsService.getAccessibleDeals();
 
   const showFundSelector = form.category === 'Fund Vehicle' || form.category === 'Holding Company' || form.category === 'Blocker';
-  const showDealSelector = form.category === 'Operating Company' || form.category === 'Holding Company' || form.category === 'Blocker';
+  const showDealSelector = form.category === 'Investment Level' || form.category === 'Holding Company' || form.category === 'Blocker';
   const fundSingleSelect = form.category === 'Fund Vehicle';
 
   function handleSubmit() {

@@ -78,7 +78,7 @@ function parseRows(raw: Record<string, unknown>[]): InvestorRecord[] {
       allocationPercentage: norm['allocationpercentage'] ?? norm['allocation'] ?? '',
       taxExempt: norm['taxexempt'] ?? '',
       kycStatus: norm['kycstatus'] ?? norm['kyc'] ?? '',
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       comments: [],
     });
   }

@@ -41,7 +41,7 @@ export function DealIntakeForm({ onSubmit, onCancel, scopeIds }: DealIntakeFormP
       geographicFocus: '',
       sector: '',
       activityLog: [],
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       comments: [],
     };
     onSubmit(deal);

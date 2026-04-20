@@ -42,9 +42,9 @@ export async function generateAndDownloadPptx(
   // Confidentiality header (top-right, always)
   slide.addText(
     [
-      { text: formatDate(), options: { fontSize: 8, bold: true, color: 'FF0000', breakType: 'none' } },
-      { text: '\nHighly Confidential and Trade Secret', options: { fontSize: 8, bold: true, color: 'FF0000', breakType: 'none' } },
-      { text: '\nFor Internal Use Only', options: { fontSize: 8, bold: true, color: 'FF0000', breakType: 'none' } },
+      { text: formatDate(), options: { fontSize: 8, bold: true, color: 'FF0000' } },
+      { text: '\nHighly Confidential and Trade Secret', options: { fontSize: 8, bold: true, color: 'FF0000' } },
+      { text: '\nFor Internal Use Only', options: { fontSize: 8, bold: true, color: 'FF0000' } },
     ],
     {
       x: 9.833,

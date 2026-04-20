@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePlatformContext, matchesScope } from '../../../platform/context';
 import { SCOPE_DIMENSIONS } from '../../../platform/context/platformContext.types';
 import type { RequestComment, RequestFormState, RequestStatus, WorkflowRequest } from '../types';
-import { REQUEST_FILTERS, STATUS_CONFIG, FREQUENCY_LABEL } from '../config';
+import { REQUEST_FILTERS, STATUS_CONFIG } from '../config';
 import { requestsService, requestTypesService, requestPlaybooksService } from '../services';
 import { RequestTable } from '../components/RequestTable';
 import { RequestKanbanBoard } from '../components/RequestKanbanBoard';
@@ -369,14 +369,14 @@ export function RequestListPage() {
             <div className={styles.listHeader}>
               <div className={styles.viewToggle}>
                 <button
-                  className={`${styles.viewToggleBtn} ${viewMode === 'table' ? styles.viewToggleBtnActive : ''}`}
+                  className={`${styles.viewToggleBtn} ${styles.viewToggleBtnActive}`}
                   onClick={() => setViewMode('table')}
                   type="button"
                 >
                   Table
                 </button>
                 <button
-                  className={`${styles.viewToggleBtn} ${viewMode === 'board' ? styles.viewToggleBtnActive : ''}`}
+                  className={styles.viewToggleBtn}
                   onClick={() => setViewMode('board')}
                   type="button"
                 >
@@ -419,14 +419,14 @@ export function RequestListPage() {
           <div className={styles.listHeader}>
             <div className={styles.viewToggle}>
               <button
-                className={`${styles.viewToggleBtn} ${viewMode === 'table' ? styles.viewToggleBtnActive : ''}`}
+                className={styles.viewToggleBtn}
                 onClick={() => setViewMode('table')}
                 type="button"
               >
                 Table
               </button>
               <button
-                className={`${styles.viewToggleBtn} ${viewMode === 'board' ? styles.viewToggleBtnActive : ''}`}
+                className={`${styles.viewToggleBtn} ${styles.viewToggleBtnActive}`}
                 onClick={() => setViewMode('board')}
                 type="button"
               >

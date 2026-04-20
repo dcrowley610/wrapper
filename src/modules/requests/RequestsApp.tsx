@@ -1,4 +1,4 @@
-import { usePlatformContext } from '../../platform/context/PlatformContext';
+import { usePlatformContext } from '../../platform/context';
 import styles from './RequestsApp.module.css';
 
 const activeRequests = [

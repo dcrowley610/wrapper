@@ -57,7 +57,7 @@ export function InvestorIntakeForm({ onSubmit, onCancel }: InvestorIntakeFormPro
       allocationPercentage: '',
       taxExempt: '',
       kycStatus: '',
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       comments: [],
     };
     onSubmit(investor);

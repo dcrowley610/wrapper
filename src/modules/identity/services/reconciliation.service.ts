@@ -5,7 +5,6 @@ import type {
   MasterDomain,
   TaskStatus,
 } from '../types';
-import { normalize } from '../normalization';
 
 type Listener = () => void;
 
@@ -51,11 +50,6 @@ let TASKS: ReconciliationTask[] = [
 
 // ── Demo Match Candidates ──
 
-const srcNorm1 = normalize('Atlas Master Fund LP');
-const srcNorm2 = normalize('Smith Real Estate, L.L.C.');
-const srcNorm3 = normalize('Meridian Family Office Limited');
-const srcNorm4 = normalize('Brep IX Real Estate Equity');
-
 let CANDIDATES: MatchCandidate[] = [
   {
     id: 'mc-1', sourceRecordId: 'src-1', candidateMasterId: 'me-atlas-master-fund',
@@ -91,7 +85,7 @@ let CANDIDATES: MatchCandidate[] = [
       { factor: 'acronym_match', weight: 1, rawScore: 10, weightedScore: 10, explanation: 'Acronym match: "MFO"' },
       { factor: 'jurisdiction_match', weight: 1, rawScore: 8, weightedScore: 8, explanation: 'Same jurisdiction: United Kingdom' },
       { factor: 'category_match', weight: 1, rawScore: 8, weightedScore: 8, explanation: 'Same category/class: Family Office' },
-      { factor: 'scope_overlap', weight: 1, rawScore: 8, weightedScore: 8, explanation: 'Scope overlap: atlas-master-fund, tax-year-2026' },
+      { factor: 'scope_overlap', weight: 1, rawScore: 8, weightedScore: 8, explanation: 'Scope overlap: bip-i, tax-year-2026' },
     ],
     aiScore: 75.3, aiExplanation: 'Moderate confidence: "Meridian Family Office Limited" may match "Meridian Family Office". Names share significant overlap but "Limited" suffix difference warrants review.',
     status: 'pending',

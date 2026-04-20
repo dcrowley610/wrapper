@@ -1,6 +1,7 @@
 import type { FundFamily, Fund } from '../types/fund.types';
-import type { ScopeDimensionOption } from '../../../platform/context/platformContext.types';
+import type { ScopeDimensionOption, ScopeSelection } from '../../../platform/context/platformContext.types';
 import type { RecordComment } from '../../../types/comment';
+import { getFundViewProfile as lookupFundViewProfile, type FundViewProfile } from '../../../domain-config/fundViewProfiles';
 
 let _version = 0;
 
@@ -160,5 +161,15 @@ export const fundsService = {
     if (!fund) return undefined;
     const family = FUND_FAMILIES.find((ff) => ff.id === fund.fundFamilyId);
     return family?.name;
+  },
+
+  getSelectedFund(selection: ScopeSelection): Fund | undefined {
+    if (selection.fundIds.length !== 1) return undefined;
+    return FUNDS.find((f) => f.scopeId === selection.fundIds[0]);
+  },
+
+  getFundViewProfile(selection: ScopeSelection): FundViewProfile | undefined {
+    const fund = this.getSelectedFund(selection);
+    return fund ? lookupFundViewProfile(fund.id) : undefined;
   },
 };

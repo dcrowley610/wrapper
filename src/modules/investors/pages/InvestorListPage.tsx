@@ -1,7 +1,6 @@
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformContext } from '../../../platform/context';
-import { InvestorCard } from '../components/InvestorCard';
 import { InvestorTable, ALL_INVESTOR_COLUMNS, DEFAULT_INVESTOR_COLUMNS } from '../components/InvestorTable';
 import { ColumnPicker } from '../../../components/ColumnPicker/ColumnPicker';
 import { InvestorEditModal } from '../components/InvestorEditModal';
@@ -16,8 +15,6 @@ import styles from '../InvestorsModule.module.css';
 
 const InvestorImport = lazy(() => import('../components/InvestorImport').then((m) => ({ default: m.InvestorImport })));
 
-type ViewMode = 'table' | 'cards';
-
 export function InvestorListPage() {
   const { scopeSelection } = usePlatformContext();
   const navigate = useNavigate();
@@ -26,7 +23,6 @@ export function InvestorListPage() {
     status: INVESTOR_FILTERS[0].options[0],
     class: INVESTOR_FILTERS[1].options[0],
   });
-  const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [editTargetId, setEditTargetId] = useState<string | null>(null);
@@ -183,23 +179,6 @@ export function InvestorListPage() {
       )}
 
       <section className={styles.workspace}>
-        <div className={styles.viewToggle}>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'table' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => setViewMode('table')}
-            type="button"
-          >
-            Table
-          </button>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'cards' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => setViewMode('cards')}
-            type="button"
-          >
-            Cards
-          </button>
-        </div>
-
         <div className={styles.toolbar}>
           <div className={styles.searchWrap}>
             <label className={styles.fieldLabel} htmlFor="investor-search">
@@ -236,33 +215,21 @@ export function InvestorListPage() {
           </div>
         </div>
 
-        {viewMode === 'table' ? (
-          sortedInvestors.length > 0 ? (
-            <InvestorTable
-              investors={sortedInvestors}
-              sortKey={sortKey}
-              sortDirection={sortDir}
-              onSort={handleSort}
-              onOpen={handleOpenInvestor}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onComment={handleComment}
-              visibleColumns={visibleColumns}
-              onColumnsChange={handleColumnsChange}
-            />
-          ) : (
-            <div className={styles.emptyState}>No investors match this scope and filter combination yet.</div>
-          )
+        {sortedInvestors.length > 0 ? (
+          <InvestorTable
+            investors={sortedInvestors}
+            sortKey={sortKey}
+            sortDirection={sortDir}
+            onSort={handleSort}
+            onOpen={handleOpenInvestor}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onComment={handleComment}
+            visibleColumns={visibleColumns}
+            onColumnsChange={handleColumnsChange}
+          />
         ) : (
-          <div className={styles.recordGrid}>
-            {visibleInvestors.length > 0 ? (
-              visibleInvestors.map((investor) => (
-                <InvestorCard key={investor.id} investor={investor} onOpen={handleOpenInvestor} />
-              ))
-            ) : (
-              <div className={styles.emptyState}>No investors match this scope and filter combination yet.</div>
-            )}
-          </div>
+          <div className={styles.emptyState}>No investors match this scope and filter combination yet.</div>
         )}
 
         {editTargetId && (() => {

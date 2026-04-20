@@ -185,7 +185,7 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'txnm-holdings',
     name: 'TXNM Holdings LLC',
     legalName: 'TXNM Holdings LLC',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Partnership',
@@ -228,7 +228,7 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'tallgrass-opco',
     name: 'Tallgrass Energy OpCo LLC',
     legalName: 'Tallgrass Energy OpCo LLC',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Partnership',
@@ -270,7 +270,7 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'bravo-industrial-opco',
     name: 'Bravo Industrial OpCo LLC',
     legalName: 'Bravo Industrial OpCo LLC',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Partnership',
@@ -312,7 +312,7 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'safe-harbor-opco',
     name: 'Safe Harbor Marinas OpCo LLC',
     legalName: 'Safe Harbor Marinas OpCo LLC',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Partnership',
@@ -490,8 +490,8 @@ let ENTITY_RECORDS: EntityRecord[] = [
     status: 'Active',
     taxClassification: 'Partnership',
     ownerTeam: 'Fund Tax',
-    scopeIds: ['atlas-master-fund', 'tax-year-2026'],
-    associatedFundIds: ['atlas-master-fund'],
+    scopeIds: ['bip-i', 'tax-year-2026'],
+    associatedFundIds: ['bip-i'],
     associatedDealIds: ['atlas-infra-acquisition', 'atlas-lux-debt-facility', 'smith-re-equity-roll'],
     structureSummary: 'Primary master fund — top-level owner across BIP structures.',
     requestCount: 4,
@@ -526,12 +526,12 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'smith-real-estate-llc',
     name: 'Smith Real Estate LLC',
     legalName: 'Smith Real Estate LLC',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Partnership',
     ownerTeam: 'Portfolio Reporting',
-    scopeIds: ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'fed-state-compliance', 'tax-year-2026'],
     associatedFundIds: [],
     associatedDealIds: ['atlas-infra-acquisition', 'smith-re-equity-roll'],
     structureSummary: 'Operating company owned by BIP Master Fund — real estate portfolio.',
@@ -566,12 +566,12 @@ let ENTITY_RECORDS: EntityRecord[] = [
     id: 'drip-ventures-inc',
     name: 'Drip Ventures Inc',
     legalName: 'Drip Ventures Inc.',
-    category: 'Operating Company',
+    category: 'Investment Level',
     jurisdiction: 'Delaware',
     status: 'Active',
     taxClassification: 'Corporation',
     ownerTeam: 'Portfolio Reporting',
-    scopeIds: ['atlas-master-fund', 'fed-state-compliance', 'tax-year-2026'],
+    scopeIds: ['bip-i', 'fed-state-compliance', 'tax-year-2026'],
     associatedFundIds: [],
     associatedDealIds: ['smith-re-equity-roll'],
     structureSummary: 'Operating company — subsidiary of Smith Real Estate LLC.',
@@ -612,8 +612,8 @@ let ENTITY_RECORDS: EntityRecord[] = [
     status: 'Active',
     taxClassification: 'Corporation',
     ownerTeam: 'International Tax',
-    scopeIds: ['atlas-blocker-lux', 'atlas-master-fund', 'tax-year-2026'],
-    associatedFundIds: ['atlas-blocker-lux', 'bip-i'],
+    scopeIds: ['bx-infra-i', 'bip-i', 'tax-year-2026'],
+    associatedFundIds: ['bx-infra-i', 'bip-i'],
     associatedDealIds: ['atlas-lux-debt-facility', 'smith-re-equity-roll'],
     structureSummary: 'Luxembourg blocker entity owned by BIP Master Fund for non-US investor access.',
     requestCount: 3,
@@ -692,7 +692,17 @@ export const entitiesService = {
   },
 
   getScopedEntities(selection: ScopeSelection): EntityRecord[] {
-    return ENTITY_RECORDS.filter((entity) => matchesScope(entity.scopeIds, selection));
+    return ENTITY_RECORDS.filter((entity) => {
+      const effectiveScopeIds = [...entity.scopeIds, ...entity.associatedDealIds];
+      if (!matchesScope(effectiveScopeIds, selection)) return false;
+      if (
+        selection.entityCategoryIds.length > 0 &&
+        !selection.entityCategoryIds.includes(entity.category)
+      ) {
+        return false;
+      }
+      return true;
+    });
   },
 
   getAccessibleEntityById(id: string): EntityRecord | undefined {

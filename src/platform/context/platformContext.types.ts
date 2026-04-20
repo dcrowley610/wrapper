@@ -12,18 +12,12 @@ export type ScopeOption = {
 };
 
 export const MOCK_SCOPE_OPTIONS: ScopeOption[] = [
-  {
-    id: 'atlas-master-fund',
-    label: 'Atlas Master Fund',
-    kind: 'fund',
-    description: 'Primary master fund for 2026 tax orchestration.',
-  },
-  {
-    id: 'atlas-blocker-lux',
-    label: 'Atlas Blocker Lux',
-    kind: 'legalEntity',
-    description: 'Lux blocker entity with active structure and compliance tasks.',
-  },
+  ...fundsService.getFundScopeDimensionOptions().map((opt) => ({
+    id: opt.id,
+    label: opt.label,
+    kind: 'fund' as const,
+    description: opt.description,
+  })),
   {
     id: 'tax-year-2026',
     label: 'Tax Year 2026',
@@ -36,23 +30,11 @@ export const MOCK_SCOPE_OPTIONS: ScopeOption[] = [
     kind: 'workstream',
     description: 'Shared workstream covering return prep, review, and notices.',
   },
-  {
-    id: 'brep-ix',
-    label: 'BREP IX',
-    kind: 'fund',
-    description: 'Blackstone Real Estate Partners IX fund scope.',
-  },
-  {
-    id: 'brep-x',
-    label: 'BREP X',
-    kind: 'fund',
-    description: 'Blackstone Real Estate Partners X fund scope.',
-  },
 ];
 
 // --- New multi-dimensional scope types ---
 
-export type ScopeDimension = 'fund' | 'taxYear' | 'workstream' | 'investor' | 'deal';
+export type ScopeDimension = 'fund' | 'taxYear' | 'workstream' | 'investor' | 'deal' | 'entityCategory';
 
 export type ScopeDimensionOption = {
   id: string;
@@ -67,6 +49,7 @@ export type ScopeSelection = {
   workstreamIds: string[];
   investorIds: string[];
   dealIds: string[];
+  entityCategoryIds: string[];
 };
 
 export type ScopePreset = {
@@ -77,12 +60,7 @@ export type ScopePreset = {
 };
 
 export const SCOPE_DIMENSIONS: Record<ScopeDimension, ScopeDimensionOption[]> = {
-  fund: [
-    { id: 'atlas-master-fund', label: 'Atlas Master Fund', dimension: 'fund', description: 'Primary master fund for 2026 tax orchestration.' },
-    { id: 'atlas-blocker-lux', label: 'Atlas Blocker Lux', dimension: 'fund', description: 'Lux blocker entity with active structure and compliance tasks.' },
-    { id: 'brep-ix', label: 'BREP IX', dimension: 'fund', description: 'Blackstone Real Estate Partners IX fund scope.' },
-    { id: 'brep-x', label: 'BREP X', dimension: 'fund', description: 'Blackstone Real Estate Partners X fund scope.' },
-  ],
+  fund: fundsService.getFundScopeDimensionOptions(),
   taxYear: [
     { id: 'tax-year-2024', label: '2024', dimension: 'taxYear', description: 'Tax year 2024 scope.' },
     { id: 'tax-year-2025', label: '2025', dimension: 'taxYear', description: 'Tax year 2025 scope.' },
@@ -98,22 +76,39 @@ export const SCOPE_DIMENSIONS: Record<ScopeDimension, ScopeDimensionOption[]> = 
     { id: 'alex-rivera', label: 'Alex Rivera', dimension: 'investor', description: 'Canadian individual investor.' },
   ],
   deal: [],
+  entityCategory: [
+    { id: 'Fund Vehicle', label: 'Fund Vehicle', dimension: 'entityCategory', description: 'Master funds, feeders, and fund-level vehicles.' },
+    { id: 'Holding Company', label: 'Holding Company', dimension: 'entityCategory', description: 'Intermediate holding entities within a deal structure.' },
+    { id: 'Blocker', label: 'Blocker', dimension: 'entityCategory', description: 'Corporate blockers used for tax planning.' },
+    { id: 'Investment Level', label: 'Investment Level', dimension: 'entityCategory', description: 'Portfolio / investment-level operating entities.' },
+    { id: 'Third-Party', label: 'Third-Party', dimension: 'entityCategory', description: 'External entities tracked for context.' },
+  ],
 };
 
 export const SCOPE_PRESETS: ScopePreset[] = [
-  { id: 'brep-ix-2026', label: 'BREP IX / 2026', description: 'BREP IX fund scoped to tax year 2026.', selection: { fundIds: ['brep-ix'], taxYearIds: ['tax-year-2026'], workstreamIds: [], investorIds: [], dealIds: [] } },
-  { id: 'brep-ix-all-years', label: 'BREP IX — All Years', description: 'All tax years for BREP IX.', selection: { fundIds: ['brep-ix'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
-  { id: 'compliance-2026', label: 'State Compliance — 2026', description: 'Federal + State Compliance workstream for 2026.', selection: { fundIds: [], taxYearIds: ['tax-year-2026'], workstreamIds: ['fed-state-compliance'], investorIds: [], dealIds: [] } },
-  { id: 'all-blockers', label: 'All Blockers — All Years', description: 'Atlas Blocker Lux across all tax years.', selection: { fundIds: ['atlas-blocker-lux'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
-  { id: 'everything', label: 'All Funds / All Years', description: 'No scope filter — show everything.', selection: { fundIds: [], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [] } },
+  { id: 'brep-ix-2026', label: 'BREP IX / 2026', description: 'BREP IX fund scoped to tax year 2026.', selection: { fundIds: ['blackstone-re-ix'], taxYearIds: ['tax-year-2026'], workstreamIds: [], investorIds: [], dealIds: [], entityCategoryIds: [] } },
+  { id: 'brep-ix-all-years', label: 'BREP IX — All Years', description: 'All tax years for BREP IX.', selection: { fundIds: ['blackstone-re-ix'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [], entityCategoryIds: [] } },
+  { id: 'compliance-2026', label: 'State Compliance — 2026', description: 'Federal + State Compliance workstream for 2026.', selection: { fundIds: [], taxYearIds: ['tax-year-2026'], workstreamIds: ['fed-state-compliance'], investorIds: [], dealIds: [], entityCategoryIds: [] } },
+  { id: 'bip-all-years', label: 'BIP I — All Years', description: 'All tax years for Blackstone Infrastructure Partners I.', selection: { fundIds: ['bip-i'], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [], entityCategoryIds: [] } },
+  { id: 'everything', label: 'All Funds / All Years', description: 'No scope filter — show everything.', selection: { fundIds: [], taxYearIds: [], workstreamIds: [], investorIds: [], dealIds: [], entityCategoryIds: [] } },
 ];
 
+function getMostRecentTaxYearId(): string[] {
+  const mostRecentTaxYear = SCOPE_DIMENSIONS.taxYear
+    .map((option) => ({ option, year: Number.parseInt(option.label, 10) }))
+    .filter(({ year }) => Number.isFinite(year))
+    .sort((a, b) => b.year - a.year)[0]?.option;
+
+  return mostRecentTaxYear ? [mostRecentTaxYear.id] : [];
+}
+
 export const DEFAULT_SCOPE_SELECTION: ScopeSelection = {
-  fundIds: ['atlas-master-fund'],
-  taxYearIds: ['tax-year-2026'],
+  fundIds: [],
+  taxYearIds: getMostRecentTaxYearId(),
   workstreamIds: [],
   investorIds: [],
   dealIds: [],
+  entityCategoryIds: [],
 };
 
 export function matchesScope(recordScopeIds: string[], selection: ScopeSelection): boolean {
@@ -168,6 +163,14 @@ export function computeScopeLabel(selection: ScopeSelection): string {
       parts.push(opt?.label ?? selection.dealIds[0]);
     } else {
       parts.push(`${selection.dealIds.length} Deals`);
+    }
+  }
+
+  if (selection.entityCategoryIds.length > 0) {
+    if (selection.entityCategoryIds.length === 1) {
+      parts.push(selection.entityCategoryIds[0]);
+    } else {
+      parts.push(`${selection.entityCategoryIds.length} Entity Types`);
     }
   }
 

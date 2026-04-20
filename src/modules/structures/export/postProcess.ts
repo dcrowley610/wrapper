@@ -242,7 +242,7 @@ function getChildByLocalName(parent: Element, localName: string): Element | null
 }
 
 function getElementsByLocalName(root: ParentNode, localName: string): Element[] {
-  if ('getElementsByTagNameNS' in root) {
+  if (root instanceof Document || root instanceof Element) {
     return Array.from(root.getElementsByTagNameNS('*', localName));
   }
   return [];

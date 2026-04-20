@@ -1,7 +1,7 @@
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlatformContext } from '../../../platform/context';
-import { EntityCard } from '../components/EntityCard';
+import { useFundViewProfile } from '../../../platform/hooks/useFundViewProfile';
 import { EntityTable, ALL_ENTITY_COLUMNS, DEFAULT_ENTITY_COLUMNS } from '../components/EntityTable';
 import { ColumnPicker } from '../../../components/ColumnPicker/ColumnPicker';
 import { EntityEditModal } from '../components/EntityEditModal';
@@ -19,17 +19,65 @@ import styles from '../EntitiesModule.module.css';
 const StructuresPage = lazy(() => import('../../structures/pages/StructuresPage'));
 const EntityImport = lazy(() => import('../components/EntityImport').then((m) => ({ default: m.EntityImport })));
 
-type ViewMode = 'table' | 'cards' | 'ownership' | 'structures';
+type ViewMode = 'table' | 'ownership' | 'structures';
+
+const GLOBAL_ENTITY_COLUMNS_KEY = 'entity-visible-columns';
+
+function baseEntityFilterDefaults(): Record<string, string> {
+  return {
+    status: ENTITY_FILTERS[0].options[0],
+    category: ENTITY_FILTERS[1].options[0],
+  };
+}
 
 export function EntityListPage() {
   const { scopeSelection } = usePlatformContext();
+  const profile = useFundViewProfile();
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<ViewMode>('table');
+
+  const availableColumnDefs = useMemo(() => {
+    const hidden = new Set(profile?.entityList?.hiddenColumns ?? []);
+    return ALL_ENTITY_COLUMNS.filter((c) => !hidden.has(c.key));
+  }, [profile]);
+
+  const availableKeysSet = useMemo(
+    () => new Set(availableColumnDefs.map((c) => c.key)),
+    [availableColumnDefs],
+  );
+
+  const entityDefaultColumns = useMemo(() => {
+    const fromProfile = profile?.entityList?.defaultColumns?.filter((id) => availableKeysSet.has(id));
+    if (fromProfile && fromProfile.length > 0) return fromProfile;
+    return DEFAULT_ENTITY_COLUMNS.filter((id) => availableKeysSet.has(id));
+  }, [profile, availableKeysSet]);
+
+  const storageKey = useMemo(() => {
+    return scopeSelection.fundIds.length === 1
+      ? `${GLOBAL_ENTITY_COLUMNS_KEY}:${scopeSelection.fundIds[0]}`
+      : GLOBAL_ENTITY_COLUMNS_KEY;
+  }, [scopeSelection.fundIds]);
+
+  const readStoredColumns = useCallback(
+    (key: string): string[] | null => {
+      const stored = localStorage.getItem(key);
+      if (!stored) return null;
+      try {
+        const parsed = JSON.parse(stored);
+        if (!Array.isArray(parsed)) return null;
+        return parsed.filter((id): id is string => typeof id === 'string' && availableKeysSet.has(id));
+      } catch {
+        return null;
+      }
+    },
+    [availableKeysSet],
+  );
+
   const [searchValue, setSearchValue] = useState('');
-  const [filters, setFilters] = useState<Record<string, string>>({
-    status: ENTITY_FILTERS[0].options[0],
-    category: ENTITY_FILTERS[1].options[0],
-  });
+  const [filters, setFilters] = useState<Record<string, string>>(() => ({
+    ...baseEntityFilterDefaults(),
+    ...(profile?.entityList?.defaultFilters ?? {}),
+  }));
   const [sortKey, setSortKey] = useState('name');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [editTargetId, setEditTargetId] = useState<string | null>(null);
@@ -42,17 +90,38 @@ export function EntityListPage() {
   const [ownershipRelFilter, setOwnershipRelFilter] = useState('All types');
   const [ownershipDealFilter, setOwnershipDealFilter] = useState('All deals');
 
-  const STORAGE_KEY = 'entity-visible-columns';
   const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : DEFAULT_ENTITY_COLUMNS;
+    return readStoredColumns(storageKey) ?? entityDefaultColumns;
   });
 
-  function handleColumnsChange(keys: string[]) {
-    setVisibleColumns(keys);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
-  }
+  // Re-seed columns when fund scope (→ storageKey) or the fund's profile defaults change.
+  useEffect(() => {
+    setVisibleColumns(readStoredColumns(storageKey) ?? entityDefaultColumns);
+  }, [storageKey, entityDefaultColumns, readStoredColumns]);
 
+  // Re-seed filters when the selected fund changes; preserves user edits within a selection.
+  useEffect(() => {
+    setFilters({
+      ...baseEntityFilterDefaults(),
+      ...(profile?.entityList?.defaultFilters ?? {}),
+    });
+  }, [profile]);
+
+  const handleColumnsChange = useCallback(
+    (keys: string[]) => {
+      const validated = keys.filter((k) => availableKeysSet.has(k));
+      setVisibleColumns(validated);
+      localStorage.setItem(storageKey, JSON.stringify(validated));
+    },
+    [availableKeysSet, storageKey],
+  );
+
+  const effectiveVisibleColumns = useMemo(
+    () => visibleColumns.filter((k) => availableKeysSet.has(k)),
+    [visibleColumns, availableKeysSet],
+  );
+
+  // Ownership sub-view keeps its existing (non-profile-aware) storage key.
   const OWN_STORAGE_KEY = 'ownership-visible-columns';
   const [ownershipVisibleColumns, setOwnershipVisibleColumns] = useState<string[]>(() => {
     const stored = localStorage.getItem(OWN_STORAGE_KEY);
@@ -82,16 +151,25 @@ export function EntityListPage() {
     });
   }, [scopeSelection, searchValue, filters, entitiesVersion]);
 
+  const categoryOrder = profile?.entityList?.categoryOrder;
+
   const sortedEntities = useMemo(() => {
     const sorted = [...visibleEntities];
     sorted.sort((a, b) => {
+      if (categoryOrder) {
+        const aIdx = categoryOrder.indexOf(a.category);
+        const bIdx = categoryOrder.indexOf(b.category);
+        const aWeight = aIdx === -1 ? Number.POSITIVE_INFINITY : aIdx;
+        const bWeight = bIdx === -1 ? Number.POSITIVE_INFINITY : bIdx;
+        if (aWeight !== bWeight) return aWeight - bWeight;
+      }
       const aVal = String((a as any)[sortKey] ?? '');
       const bVal = String((b as any)[sortKey] ?? '');
       const cmp = aVal.localeCompare(bVal);
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return sorted;
-  }, [visibleEntities, sortKey, sortDir]);
+  }, [visibleEntities, sortKey, sortDir, categoryOrder]);
 
   const allEntities = useMemo(() => entitiesService.getAccessibleEntities(), [entitiesVersion]);
   const allDeals = useMemo(() => dealsService.getAccessibleDeals(), [entitiesVersion]);
@@ -183,10 +261,10 @@ export function EntityListPage() {
               <button className={styles.heroActionBtn} onClick={() => setShowImport(true)} type="button">Import</button>
               {viewMode === 'table' && (
                 <ColumnPicker
-                  columns={ALL_ENTITY_COLUMNS.filter((c) => c.key !== 'name')}
-                  visibleKeys={visibleColumns}
+                  columns={availableColumnDefs.filter((c) => c.key !== 'name')}
+                  visibleKeys={effectiveVisibleColumns}
                   onChange={handleColumnsChange}
-                  defaultKeys={DEFAULT_ENTITY_COLUMNS}
+                  defaultKeys={entityDefaultColumns}
                 />
               )}
               {viewMode === 'ownership' && (
@@ -237,13 +315,6 @@ export function EntityListPage() {
             Table
           </button>
           <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'cards' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => setViewMode('cards')}
-            type="button"
-          >
-            Cards
-          </button>
-          <button
             className={`${styles.viewToggleBtn} ${viewMode === 'ownership' ? styles.viewToggleBtnActive : ''}`}
             onClick={() => setViewMode('ownership')}
             type="button"
@@ -264,7 +335,7 @@ export function EntityListPage() {
           )}
         </div>
 
-        {(viewMode === 'table' || viewMode === 'cards') && (
+        {viewMode === 'table' && (
           <>
             <div className={styles.toolbar}>
               <div className={styles.searchWrap}>
@@ -302,38 +373,22 @@ export function EntityListPage() {
               </div>
             </div>
 
-            {viewMode === 'table' && (
-              sortedEntities.length > 0 ? (
-                <EntityTable
-                  entities={sortedEntities}
-                  sortKey={sortKey}
-                  sortDirection={sortDir}
-                  onSort={handleSort}
-                  onOpen={handleOpenEntity}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onComment={handleComment}
-                  visibleColumns={visibleColumns}
-                  onColumnsChange={handleColumnsChange}
-                />
-              ) : (
-                <div className={styles.emptyState}>
-                  No entities match this scope and filter combination yet.
-                </div>
-              )
-            )}
-
-            {viewMode === 'cards' && (
-              <div className={styles.recordGrid}>
-                {visibleEntities.length > 0 ? (
-                  visibleEntities.map((entity) => (
-                    <EntityCard key={entity.id} entity={entity} onOpen={handleOpenEntity} />
-                  ))
-                ) : (
-                  <div className={styles.emptyState}>
-                    No entities match this scope and filter combination yet.
-                  </div>
-                )}
+            {sortedEntities.length > 0 ? (
+              <EntityTable
+                entities={sortedEntities}
+                sortKey={sortKey}
+                sortDirection={sortDir}
+                onSort={handleSort}
+                onOpen={handleOpenEntity}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onComment={handleComment}
+                visibleColumns={effectiveVisibleColumns}
+                onColumnsChange={handleColumnsChange}
+              />
+            ) : (
+              <div className={styles.emptyState}>
+                No entities match this scope and filter combination yet.
               </div>
             )}
           </>

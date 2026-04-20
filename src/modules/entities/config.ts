@@ -23,5 +23,5 @@ export type FilterConfig = {
 
 export const ENTITY_FILTERS: FilterConfig[] = [
   { key: 'status', label: 'Status', options: ['All statuses', 'Active', 'Pending Review', 'Inactive'] },
-  { key: 'category', label: 'Category', options: ['All categories', 'Fund Vehicle', 'Blocker', 'Operating Company', 'Holding Company', 'Third-Party'] },
+  { key: 'category', label: 'Category', options: ['All categories', 'Fund Vehicle', 'Blocker', 'Investment Level', 'Holding Company', 'Third-Party'] },
 ];

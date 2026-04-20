@@ -10,7 +10,7 @@ type EntityIntakeFormProps = {
   scopeIds?: string[];
 };
 
-const CATEGORY_OPTIONS = ['Fund Vehicle', 'Blocker', 'Operating Company', 'Holding Company', 'Third-Party'] as const;
+const CATEGORY_OPTIONS = ['Fund Vehicle', 'Blocker', 'Investment Level', 'Holding Company', 'Third-Party'] as const;
 const STATUS_OPTIONS = ['Active', 'Pending Review', 'Inactive'] as const;
 
 export function EntityIntakeForm({ onSubmit, onCancel, scopeIds = [] }: EntityIntakeFormProps) {
@@ -44,7 +44,7 @@ export function EntityIntakeForm({ onSubmit, onCancel, scopeIds = [] }: EntityIn
   const allDeals = dealsService.getAccessibleDeals();
 
   const showFundSelector = category === 'Fund Vehicle' || category === 'Holding Company' || category === 'Blocker';
-  const showDealSelector = category === 'Operating Company' || category === 'Holding Company' || category === 'Blocker';
+  const showDealSelector = category === 'Investment Level' || category === 'Holding Company' || category === 'Blocker';
   const fundSingleSelect = category === 'Fund Vehicle';
 
   function handleFundToggle(fundId: string) {
@@ -107,7 +107,7 @@ export function EntityIntakeForm({ onSubmit, onCancel, scopeIds = [] }: EntityIn
       functionalCurrency: functionalCurrency.trim(),
       taxReportingStatus: taxReportingStatus.trim(),
       annualRevenue: annualRevenue.trim(),
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       activityLog: [],
       comments: [],
     };

@@ -8,7 +8,7 @@ type EntityImportProps = {
   onCancel: () => void;
 };
 
-const CATEGORY_OPTIONS = ['Fund Vehicle', 'Blocker', 'Operating Company', 'Holding Company', 'Third-Party'];
+const CATEGORY_OPTIONS = ['Fund Vehicle', 'Blocker', 'Investment Level', 'Holding Company', 'Third-Party'];
 const STATUS_OPTIONS = ['Active', 'Pending Review', 'Inactive'];
 
 function normalizeHeader(h: string): string {
@@ -77,7 +77,7 @@ function parseRows(raw: Record<string, unknown>[]): EntityRecord[] {
       functionalCurrency: norm['functionalcurrency'] ?? norm['currency'] ?? '',
       taxReportingStatus: norm['taxreportingstatus'] ?? norm['taxreporting'] ?? '',
       annualRevenue: norm['annualrevenue'] ?? norm['revenue'] ?? '',
-      context: { relatedEntityIds: [], relatedDealIds: [], relatedInvestorIds: [], relatedRequestIds: [] },
+      context: { fundFamilyLabel: '', fundLabel: '' },
       activityLog: [],
       comments: [],
     });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { CreationMode, RequestFormState, RequestType, RequestInstance } from '../types';
+import type { CreationMode, RequestFormState } from '../types';
 import { OWNER_OPTIONS, FREQUENCY_OPTIONS, FREQUENCY_LABEL } from '../config';
 import { SCOPE_DIMENSIONS } from '../../../platform/context/platformContext.types';
 import { requestTypesService, requestsService, requestPlaybooksService } from '../services';
